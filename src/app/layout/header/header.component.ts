@@ -128,4 +128,8 @@ export class HeaderComponent implements OnInit {
       document.body.removeChild(textArea);
     }
   }
+
+  onLoadWeb() {
+    initFlowbite();
+  }
 }

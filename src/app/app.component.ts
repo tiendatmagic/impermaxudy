@@ -19,7 +19,7 @@ export class AppComponent {
       this.translate.use(lang);
     }
     else {
-      this.translate.use('vi');
+      this.translate.use('en');
     }
     initFlowbite();
   }
