@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { WelcomeModalComponent } from './modal/welcome-modal/welcome-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class AppComponent {
   title = 'angular_web3';
 
-  constructor(public translate: TranslateService) { }
+  constructor(public translate: TranslateService, private matDialog: MatDialog) { }
   ngOnInit(): void {
     var lang = localStorage.getItem('event-ticket-lang');
 
@@ -22,5 +24,12 @@ export class AppComponent {
       this.translate.use('en');
     }
     initFlowbite();
+
+    this.matDialog.open(WelcomeModalComponent,
+      {
+        width: '400px',
+        height: 'auto',
+      }
+    );
   }
 }
