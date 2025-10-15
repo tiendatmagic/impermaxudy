@@ -4,6 +4,7 @@ import { HomeComponent } from './page/home/home.component';
 import { ContactComponent } from './page/contact/contact.component';
 import { TutorialComponent } from './page/tutorial/tutorial.component';
 import { AccountComponent } from './page/account/account.component';
+import { RewardHistoryComponent } from './page/reward-history/reward-history.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'account',
     component: AccountComponent,
+  },
+  {
+    path: 'reward-history',
+    component: RewardHistoryComponent,
   },
   {
     path: 'contact',

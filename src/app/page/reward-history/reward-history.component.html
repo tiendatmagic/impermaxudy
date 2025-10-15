@@ -1,0 +1,49 @@
+<div class="mx-4 my-3">
+  <p class="text-2xl font-medium">Reward History</p>
+</div>
+
+
+<div class="custom-form-container rounded-xl flex flex-col items-start gap-4 mx-4 my-3 border-none">
+  <div class="group-button-container grid w-full grid-cols-2 gap-2">
+    <button
+      class="form-button w-full h-12 flex items-center justify-center gap-2 text-sm font-medium text-center rounded-xl px-3 py-2.5"
+      matRipple matRippleColor="#ffffff80"
+      [ngClass]="chooseTab == 1 ? 'bg-[#19a29c] text-white' :' bg-transparent border-gray-500 text-[#19a29c] border'"
+      (click)="chooseTab = 1">
+      Node reward </button>
+
+    <button
+      class="form-button w-full h-12 flex items-center justify-center gap-2 text-sm font-medium text-center rounded-xl px-3 py-2.5"
+      matRipple matRippleColor="#ffffff80"
+      [ngClass]="chooseTab == 2 ? 'bg-[#19a29c] text-white' :' bg-transparent border-gray-500 text-[#19a29c] border'"
+      (click)="chooseTab = 2">
+      Savings reward</button>
+  </div>
+
+  <ng-container *ngIf="chooseTab == 1">
+    <div class="min-h-40 flex items-center justify-center w-full">
+      <div>
+        <div class="my-5">
+          <img src="/assets/images/no-data.svg" alt="">
+        </div>
+        <p class="my-5 text-center">
+          No data
+        </p>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="chooseTab == 2">
+    <div class="min-h-40 flex items-center justify-center w-full">
+      <div>
+        <div class="my-5">
+          <img src="/assets/images/no-data.svg" alt="">
+        </div>
+        <p class="my-5 text-center">
+          No data
+        </p>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
