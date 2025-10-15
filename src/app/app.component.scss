@@ -4,7 +4,6 @@
     width: 100%;
     height: 100vh;
     position: relative;
-    background-color: #1a1b1a;
   }
 
   input::-webkit-outer-spin-button,
@@ -65,7 +64,6 @@
   #fixedbutton {
     background: #19a29c;
     color: #fff;
-    box-shadow: none;
     border-radius: 50%;
     z-index: 98;
     transition: all 0.3s;
