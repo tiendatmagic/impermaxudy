@@ -70,7 +70,7 @@
               <div class="p-2" matTooltip="{{ balance | number : '1.1-5' }} {{ nativeSymbol }}">
                 {{ balance ?? 0 | number : "1.1-5" }} {{ nativeSymbol }}
               </div>
-              <div class="bg-[#898c90] p-2 rounded-lg text-white">
+              <div class="p-2 text-white bg-gray-600 rounded-lg">
                 {{ account.slice(0, 5) }}...{{ account.slice(-5) }}
               </div>
             </div>
@@ -142,7 +142,7 @@
 
               <div class="p-4">
                 <button (click)="disconnectWallet()"
-                  class="p-3 font-medium text-white bg-[#898c90] rounded-lg focus:border-0 focus:outline-none w-full"
+                  class="focus:border-0 focus:outline-none w-full p-3 font-medium text-white bg-gray-600 rounded-lg"
                   matRipple *ngIf="isConnected">
                   {{ "menu.disconnect" | translate }}
                 </button>
