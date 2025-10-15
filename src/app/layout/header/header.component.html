@@ -19,15 +19,9 @@
             </a>
           </li>
           <li class="flex items-center">
-            <a routerLink="/contact" routerLinkActive="text-violet-600"
+            <a routerLink="/account" routerLinkActive="text-violet-600"
               class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-700">
-              {{ "menu.contact" | translate }}
-            </a>
-          </li>
-          <li class="flex items-center">
-            <a routerLink="/tutorial" routerLinkActive="text-violet-600"
-              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-700">
-              {{ "menu.tutorial" | translate }}
+              Account
             </a>
           </li>
         </ul>
@@ -143,20 +137,6 @@
                     {{ "menu.balance" | translate }}:
                     {{ balance ?? 0 | number : "1.1-5" }} {{ nativeSymbol }}
                   </div>
-                  <div class="flex items-center justify-between gap-3">
-                    <div>
-                      {{ "menu.this_lang" | translate }}:
-                      {{ lang == "vi" ? "Việt Nam" : "English" }}
-                    </div>
-                    <div
-                      class="flex cursor-pointer min-w-11 h-11 justify-center items-center rounded-full bg-[#f3f4f6] dark:bg-[#2a3745]"
-                      (click)="toggleLanguage()">
-                      <div class="swap swap-rotate">
-                        <img src="/assets/images/vn.svg" alt="" class="w-5" *ngIf="lang !== 'vi'" />
-                        <img src="/assets/images/us.svg" alt="" class="w-5" *ngIf="lang === 'vi'" />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -201,41 +181,24 @@
   </div>
 </nav>
 
-<div class="bg-[#19a29c] py-1.5 px-1 sm:px-6 md:px-8 text-white flex items-center gap-3">
-  <div class="flex items-center justify-between w-full gap-3">
-    <div class="flex items-center gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-        class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-      </svg>
-      <span>
-        Node Reward Rate
-      </span>
-    </div>
-
-    <div>
-      <button class="lg:hidden flex items-center justify-center w-10 h-10 text-white cursor-pointer" type="button"
-        data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M1 1h15M1 7h15M1 13h15" />
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
-
 <ng-container>
   <!-- drawer component -->
   <div id="drawer-navigation"
-    class="fixed top-0 left-0 z-40 block w-64 h-screen p-3 overflow-y-auto transition-transform -translate-x-full bg-[#1a1b1a] lg:hidden"
+    class="fixed top-0 left-0 z-40 block w-72 h-screen p-3 overflow-y-auto transition-transform -translate-x-full bg-[#1a1b1a] lg:hidden"
     tabindex="-1" aria-labelledby="drawer-navigation-label">
-    <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase">
-      Menu
-    </h5>
+    <div id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase">
+      <div class="md:w-auto flex justify-between" (click)="onLoadWeb()">
+        <a routerLink="/" class="rtl:space-x-reverse flex items-center space-x-3">
+          <img src="/assets/images/logo.png" class="min-w-10 lg:w-11 lg:h-11 h-10 rounded-full"
+            alt="Impermaxudy Logo" />
+          <span class="whitespace-nowrap sm:block self-center hidden text-base font-semibold text-white">
+            Impermaxudy
+          </span>
+        </a>
+      </div>
+    </div>
     <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation"
-      class="text-gray-400 bg-transparent hover:bg-gray-700 hover:text-white rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center">
+      class="text-gray-400 bg-transparent hover:bg-gray-700 hover:text-white rounded-lg text-sm p-1.5 absolute top-4 end-2.5 inline-flex items-center">
       <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd"
@@ -245,10 +208,19 @@
       <span class="sr-only">Close menu</span>
     </button>
     <div class="py-4 overflow-y-auto">
-      <ul class="space-y-2 font-medium">
+      <ul class="font-medium">
         <li>
           <a routerLink="/home" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
             data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--fluent" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 24 24" data-v-21f2986d="" data-icon="fluent:home-24-regular">
+              <g fill="none">
+                <path
+                  d="M10.55 2.532a2.25 2.25 0 0 1 2.9 0l6.75 5.692c.507.428.8 1.057.8 1.72v9.803a1.75 1.75 0 0 1-1.75 1.75h-3.5a1.75 1.75 0 0 1-1.75-1.75v-5.5a.25.25 0 0 0-.25-.25h-3.5a.25.25 0 0 0-.25.25v5.5a1.75 1.75 0 0 1-1.75 1.75h-3.5A1.75 1.75 0 0 1 3 19.747V9.944c0-.663.293-1.292.8-1.72l6.75-5.692zm1.933 1.147a.75.75 0 0 0-.966 0L4.767 9.37a.75.75 0 0 0-.267.573v9.803c0 .138.112.25.25.25h3.5a.25.25 0 0 0 .25-.25v-5.5c0-.967.784-1.75 1.75-1.75h3.5c.966 0 1.75.783 1.75 1.75v5.5c0 .138.112.25.25.25h3.5a.25.25 0 0 0 .25-.25V9.944a.75.75 0 0 0-.267-.573l-6.75-5.692z"
+                  fill="currentColor"></path>
+              </g>
+            </svg>
             <span class="ms-3">
               {{ "menu.home" | translate }}
             </span>
@@ -256,19 +228,17 @@
         </li>
 
         <li>
-          <a routerLink="/contact" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+          <a routerLink="/account" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
             data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--ph" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 256 256" data-v-21f2986d="" data-icon="ph:wallet-light">
+              <path
+                d="M216 74H56a10 10 0 0 1 0-20h136a6 6 0 0 0 0-12H56a22.025 22.025 0 0 0-22 22v128a22.025 22.025 0 0 0 22 22h160a14.016 14.016 0 0 0 14-14V88a14.016 14.016 0 0 0-14-14zm2 126a2.003 2.003 0 0 1-2 2H56a10.012 10.012 0 0 1-10-10V83.593A21.857 21.857 0 0 0 56 86h160a2.003 2.003 0 0 1 2 2zm-28-56a10 10 0 1 1-10-10a10 10 0 0 1 10 10z"
+                fill="currentColor"></path>
+            </svg>
             <span class="ms-3">
-              {{ "menu.contact" | translate }}
-            </span>
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/tutorial" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
-            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
-            <span class="ms-3">
-              {{ "menu.tutorial" | translate }}
+              Account
             </span>
           </a>
         </li>
