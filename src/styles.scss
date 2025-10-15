@@ -12,6 +12,7 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 
   --mat-dialog-subhead-line-height: 1rem !important;
+  --mat-dialog-container-color: #1a1b1a !important;
   --mat-sys-corner-extra-large: 15px !important;
   .mat-mdc-dialog-title::before {
     display: inline-block;
@@ -30,6 +31,7 @@ body {
       0px 24px 38px 3px rgba(0, 0, 0, 0.14),
       0px 9px 46px 8px rgba(0, 0, 0, 0.12)
     );
+    color: #fff;
   }
 }
 
