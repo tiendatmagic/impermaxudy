@@ -48,44 +48,25 @@ export class Web3Service {
     abi: any;
     blockExplorerUrls?: any;
   }> = {
-      '0xa4b1': {
+      '0x1': {
         symbol: 'ETH',
-        name: 'Arbitrum One',
-        shortName: 'Arbitrum One',
-        logo: '/assets/images/logo/arb.png',
-        rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-        contractAddress: '0x718a71aaa7501593ec2bdf2f7bc87aaafdabde15',
-        abi: StudentABI,
-        blockExplorerUrls: ['https://arbiscan.io'],
-      },
-      '0xa': {
-        symbol: 'ETH',
-        name: 'Optimism',
-        shortName: 'Optimism',
-        logo: '/assets/images/logo/op.png',
-        rpcUrls: ['https://mainnet.optimism.io'],
+        name: 'Ethereum Mainnet',
+        shortName: 'Ethereum',
+        logo: '/assets/images/logo/eth.png',
+        rpcUrls: ['https://eth.llamarpc.com'],
         contractAddress: '0x0000000000000000000000000000000000000000',
         abi: StudentABI,
-        blockExplorerUrls: ['https://optimistic.etherscan.io'],
+        blockExplorerUrls: ['https://etherscan.io'],
       },
-      '0x89': {
-        symbol: 'POL',
-        name: 'Polygon',
-        shortName: 'Polygon',
-        logo: '/assets/images/logo/pol.png',
-        rpcUrls: ['https://polygon-rpc.com'],
+      '0x38': {
+        symbol: 'BNB',
+        name: 'BNB Smart Chain',
+        shortName: 'BSC',
+        logo: '/assets/images/logo/bnb.png',
+        rpcUrls: ['https://bsc-dataseed1.binance.org'],
         contractAddress: '0x0000000000000000000000000000000000000000',
         abi: StudentABI,
-        blockExplorerUrls: ['https://polygonscan.com'],
-      },
-      '0x7b7': {
-        symbol: 'ONUS',
-        name: 'ONUS',
-        shortName: 'ONUS',
-        logo: '/assets/images/logo/onus.png',
-        rpcUrls: ['https://rpc.onuschain.io'],
-        contractAddress: '0x0000000000000000000000000000000000000000',
-        abi: StudentABI,
+        blockExplorerUrls: ['https://bscscan.com'],
       },
       '0x61': {
         symbol: 'BNB',
@@ -357,7 +338,6 @@ export class Web3Service {
           }
         } else {
           console.warn('Network switch failed, but read operations will use selected chain:', formatted);
-          this.showModal('Error', 'Failed to switch network. Data has been loaded, but transactions may fail if the wallet network doesn’t match.', 'error');
         }
       }
     }
