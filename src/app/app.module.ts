@@ -23,6 +23,7 @@ import { TutorialComponent } from './page/tutorial/tutorial.component';
 import { WelcomeModalComponent } from './modal/welcome-modal/welcome-modal.component';
 import { AccountComponent } from './page/account/account.component';
 import { RewardHistoryComponent } from './page/reward-history/reward-history.component';
+import { ViewHistoryComponent } from './page/view-history/view-history.component';
 
 const globalRippleConfig: RippleGlobalOptions = {
   animation: {
@@ -47,7 +48,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TutorialComponent,
     WelcomeModalComponent,
     AccountComponent,
-    RewardHistoryComponent
+    RewardHistoryComponent,
+    ViewHistoryComponent
   ],
   imports: [
     BrowserModule,

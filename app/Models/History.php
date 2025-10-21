@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
 
-class User extends Authenticatable
+class History extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -24,12 +24,6 @@ class User extends Authenticatable
         'id',
         'address',
         'amount',
-        'exchange_amount',
-        'profit',
-        'is_admin',
-        'chain_id',
-        'claim_at',
-        'remain_at',
     ];
 
     /**

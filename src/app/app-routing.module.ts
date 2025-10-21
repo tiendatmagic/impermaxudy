@@ -5,6 +5,7 @@ import { ContactComponent } from './page/contact/contact.component';
 import { TutorialComponent } from './page/tutorial/tutorial.component';
 import { AccountComponent } from './page/account/account.component';
 import { RewardHistoryComponent } from './page/reward-history/reward-history.component';
+import { ViewHistoryComponent } from './page/view-history/view-history.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
   {
     path: 'account',
     component: AccountComponent,
+  },
+  {
+    path: 'view-history',
+    component: ViewHistoryComponent,
   },
   {
     path: 'reward-history',

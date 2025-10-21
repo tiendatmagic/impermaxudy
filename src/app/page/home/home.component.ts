@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Web3Service } from '../../services/web3.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -8,18 +9,18 @@ import { Web3Service } from '../../services/web3.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-
-  constructor(private web3Service: Web3Service) { }
+  isConnected: boolean = false;
+  constructor(private web3Service: Web3Service, private route: Router) {
+    this.web3Service.isConnected$.subscribe((data: any) => {
+      this.isConnected = data;
+    })
+  }
   ngOnInit() {
 
   }
 
-  test() {
-    this.web3Service.checkInFunc(1);
-    this.web3Service.getTokenBalanceFunc('0x1ad11e0e96797a14336bf474676eb0a332055555')
-  }
-
   connectWallet() {
+    this.route.navigate(['account']);
     this.web3Service.connectWallet();
   }
 

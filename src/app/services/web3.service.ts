@@ -1,9 +1,11 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserProvider, Contract, formatEther, JsonRpcProvider } from 'ethers';
+import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider } from 'ethers';
 import { NotifyModalComponent } from '../modal/notify-modal/notify-modal.component';
 import StudentABI from '../../assets/abi/StudentABI.json';
+import { HttpClient } from '@angular/common/http';
+import USDCABI from '../../assets/abi/USDCABI.json';
 
 declare let window: any;
 
@@ -23,6 +25,16 @@ export class Web3Service {
 
   private studentDataSubject = new BehaviorSubject<any>(null);
   public studentData$ = this.studentDataSubject.asObservable();
+
+  private balanceUSDCSubject = new BehaviorSubject<number>(0);
+  public balanceUSDC$ = this.balanceUSDCSubject.asObservable();
+  get balanceUSDC(): number {
+    return this.balanceUSDCSubject.value;
+  }
+  set balanceUSDC(value: number) {
+    this.balanceUSDCSubject.next(value);
+  }
+
   get studentData(): any {
     return this.studentDataSubject.value;
   }
@@ -47,6 +59,8 @@ export class Web3Service {
     contractAddress: string;
     abi: any;
     blockExplorerUrls?: any;
+    usdcAddress?: string;
+    usdcDecimals?: number; // Thêm số decimals cho USDC
   }> = {
       '0x1': {
         symbol: 'ETH',
@@ -57,6 +71,8 @@ export class Web3Service {
         contractAddress: '0x0000000000000000000000000000000000000000',
         abi: StudentABI,
         blockExplorerUrls: ['https://etherscan.io'],
+        usdcAddress: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+        usdcDecimals: 6,
       },
       '0x38': {
         symbol: 'BNB',
@@ -67,6 +83,8 @@ export class Web3Service {
         contractAddress: '0x0000000000000000000000000000000000000000',
         abi: StudentABI,
         blockExplorerUrls: ['https://bscscan.com'],
+        usdcAddress: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+        usdcDecimals: 18,
       },
       '0x61': {
         symbol: 'BNB',
@@ -77,10 +95,12 @@ export class Web3Service {
         contractAddress: '0x35613B592416CEc729DA3Dd8D06739D2757709fb',
         abi: StudentABI,
         blockExplorerUrls: ['https://testnet.bscscan.com'],
+        usdcAddress: '0x64544969ed7ebf5f083679233325356ebe738930',
+        usdcDecimals: 18,
       },
     };
 
-  constructor(private ngZone: NgZone, public dialog: MatDialog) {
+  constructor(private ngZone: NgZone, public dialog: MatDialog, private http: HttpClient) {
     this.initEthers();
   }
 
@@ -152,7 +172,6 @@ export class Web3Service {
           );
           this.disconnectWallet();
           localStorage.setItem('unsupportedNetwork', 'true');
-
           return;
         }
 
@@ -244,6 +263,7 @@ export class Web3Service {
     this.accountSubject.next(account);
     this.isConnectedSubject.next(true);
     await this.getBalance(account);
+    await this.getUsdcBalance(account);
   }
 
   disconnectWallet() {
@@ -400,6 +420,30 @@ export class Web3Service {
       this.handleError(e, 'deleteStudent');
     } finally {
       this.isLoading$.next(false);
+    }
+  }
+
+  async getUsdcBalance(address?: string) {
+    const chain = this.chainConfig[this.selectedChainId];
+    if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
+      this.showModal('Error', 'USDC not supported on this network.', 'error');
+      return 0;
+    }
+
+    try {
+      const signer = await this.getSigner();
+      const owner = address || (await signer.getAddress());
+
+      const usdcContract = new Contract(chain.usdcAddress, USDCABI, this.readProvider || signer);
+      const balance: bigint = await usdcContract['balanceOf'](owner);
+      const balanceInUSDC = parseFloat(formatUnits(balance, chain.usdcDecimals));
+      this.balanceUSDCSubject.next(balanceInUSDC);
+
+      console.log(`USDC Balance for ${owner}: ${balanceInUSDC}`);
+      return balance;
+    } catch (e: any) {
+      this.handleError(e, 'getUsdcBalance');
+      return 0;
     }
   }
 

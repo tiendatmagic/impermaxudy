@@ -3,12 +3,12 @@ import { Web3Service } from '../../services/web3.service';
 import { AppService } from '../../services/app.service';
 
 @Component({
-  selector: 'app-reward-history',
+  selector: 'app-view-history',
   standalone: false,
-  templateUrl: './reward-history.component.html',
-  styleUrl: './reward-history.component.scss'
+  templateUrl: './view-history.component.html',
+  styleUrl: './view-history.component.scss'
 })
-export class RewardHistoryComponent {
+export class ViewHistoryComponent {
   chooseTab: number = 1;
   account: string = '';
   data: any = [];
@@ -17,7 +17,7 @@ export class RewardHistoryComponent {
     this.web3Service.account$.subscribe((data: any) => {
       this.account = data;
       if (this.account) {
-        this.getReward();
+        this.getHistory();
       }
     })
   }
@@ -26,10 +26,9 @@ export class RewardHistoryComponent {
 
   }
 
-  getReward() {
-    this.appService.getReward(this.account, this.web3Service.selectedChainId).subscribe((data: any) => {
+  getHistory() {
+    this.appService.getHistory(this.account, this.web3Service.selectedChainId).subscribe((data: any) => {
       this.data = data.data;
     })
   }
 }
-
