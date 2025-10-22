@@ -25,6 +25,7 @@ class User extends Authenticatable
         'address',
         'amount',
         'exchange_amount',
+        'usdc',
         'profit',
         'is_admin',
         'chain_id',

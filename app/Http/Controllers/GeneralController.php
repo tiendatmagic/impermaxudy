@@ -7,15 +7,39 @@ use App\Models\Rewards;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GeneralController extends Controller
 {
-    public function autoSave(Request $request)
+
+
+    private function getCurrentETHPrice()
     {
-        return $this->getProfit($request);
+        try {
+            return cache()->remember('eth_price_usd', 60, function () {
+                $url = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd';
+                $response = file_get_contents($url);
+                $data = json_decode($response, true);
+                return $data['ethereum']['usd'] ?? null;
+            });
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
-    public function getProfit(Request $request)
+
+    private function calculateProfit(User $user)
+    {
+        $now = Carbon::now();
+        $remainAt = Carbon::parse($user->remain_at);
+
+        $seconds = $now->diffInSeconds($remainAt);
+        $profit = $seconds * 0.00001;
+
+        return $profit;
+    }
+
+    public function claimProfit(Request $request)
     {
         $address = $request->address;
         $chainId = $request->chainId;
@@ -25,37 +49,30 @@ class GeneralController extends Controller
         }
 
         $user = User::firstOrCreate(
-            [
-                'address' => $address,
-                'chain_id' => $chainId,
-            ],
+            ['address' => $address, 'chain_id' => $chainId],
             [
                 'amount' => 0,
                 'exchange_amount' => 0,
+                'usdc' => 0,
                 'profit' => 0,
                 'claim_at' => now(),
                 'remain_at' => now(),
             ]
         );
 
-        $now = Carbon::now();
-        $remainAt = Carbon::parse($user->remain_at);
-
-        $seconds = $now->diffInSeconds($remainAt);
-        $profit = $seconds * 0.00001;
+        $profit = $this->calculateProfit($user);
 
         $user->amount += $profit;
         $user->exchange_amount += $profit;
-        $user->profit = 0;
-        $user->claim_at = $now;
-        $user->remain_at = $now;
+        $user->claim_at = now();
+        $user->remain_at = now();
         $user->save();
 
-        // return 'claimed_profit' => round($profit, 5),
         return response()->json([
             'message' => 'Claim successful',
             'total_amount' => round($user->amount, 5),
             'exchange_amount' => round($user->exchange_amount, 5),
+            'usdc_amount' => round($user->usdc, 5),
             'address' => $address,
             'user' => $user,
         ]);
@@ -84,6 +101,81 @@ class GeneralController extends Controller
         ])->get();
         return response()->json([
             'data' => $data
+        ]);
+    }
+
+    public function exchange(Request $request)
+    {
+        $address = $request->address;
+        $chainId = $request->chainId;
+        $amount = (float) $request->amount;
+
+        if (!$address || !$chainId || !$amount) {
+            return response()->json(['error' => 'Missing parameters'], 400);
+        }
+
+        $user = User::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if ($user->exchange_amount < $amount) {
+            return response()->json(['error' => 'Insufficient exchange amount'], 400);
+        }
+
+        $ethPrice = $this->getCurrentETHPrice();
+        if (!$ethPrice) {
+            return response()->json(['error' => 'Unable to fetch ETH price'], 500);
+        }
+        $user->claim_at = now();
+        $user->remain_at = now();
+        $user->exchange_amount -= $amount;
+        $user->usdc = ($user->usdc ?? 0) + $amount * $ethPrice;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Exchange successful',
+            'exchange_amount' => round($user->exchange_amount, 5),
+            'usdc' => round($user->usdc, 5),
+            'user' => $user
+        ]);
+    }
+
+    public function withdraw(Request $request)
+    {
+        $address = $request->address;
+        $chainId = $request->chainId;
+        $amount = (float) $request->amount;
+
+        if (!$address || !$chainId || !$amount) {
+            return response()->json(['error' => 'Missing parameters'], 400);
+        }
+
+        $user = User::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        if (($user->usdc ?? 0) < $amount) {
+            return response()->json(['error' => 'Insufficient USDC balance'], 400);
+        }
+
+        $user->usdc -= $amount;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Withdraw successful',
+            'usdc_balance' => round($user->usdc, 5),
+            'withdraw_amount' => round($amount, 5),
+            'user' => $user
         ]);
     }
 }

@@ -110,36 +110,52 @@
           Withdraw</button>
       </div>
 
-      <ng-container *ngIf="chooseTab ==1">
-        <div class="form-title flex flex-row items-center justify-between w-full gap-4"><span
-            class="custom-title">Exchange</span></div>
+      <ng-container *ngIf="chooseTab == 1">
+        <div class="form-title flex flex-row items-center justify-between w-full gap-4">
+          <span class="custom-title">Exchange</span>
+        </div>
+
         <div
           class="custom-input rounded-xl flex flex-row items-center justify-between w-full h-10 gap-1 px-4 py-5 text-sm font-medium border border-gray-200">
-          <img class="w-4 h-4 color-[#8c96ab]" src="/assets/images/ethframe.94935fd3.svg" alt="">
+          <img class="w-4 h-4" src="/assets/images/ethframe.94935fd3.svg" alt="">
           <div class="coin-name whitespace-nowrap flex items-center gap-1 text-black"><span>ETH</span></div>
-          <input type="text" class="bg-transparent border-none outline-none min-w-[20%] text-black">
-          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1"><span>Redeem All</span>
+          <input type="number" class="bg-transparent border-none outline-none min-w-[20%] text-black text-right"
+            [(ngModel)]="exchangeETH" placeholder="0.0">
+          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1 cursor-pointer"
+            (click)="redeemAll()">
+            <span>Redeem All</span>
           </div>
         </div>
+
         <div class="percentager-container grid w-full grid-cols-4 gap-2 text-black">
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 25% </div>
+            matRipple matRippleColor="#ffffff80" (click)="exchangeETH = truncateTo5Decimals(amountETH * 0.25)">25%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 50% </div>
+            matRipple matRippleColor="#ffffff80" (click)="exchangeETH = truncateTo5Decimals(amountETH * 0.5)">50%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 75% </div>
+            matRipple matRippleColor="#ffffff80" (click)="exchangeETH = truncateTo5Decimals(amountETH * 0.75)">75%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80">100%</div>
+            matRipple matRippleColor="#ffffff80" (click)="redeemAll()">100%</div>
         </div>
+
         <div
           class="custom-input rounded-xl flex flex-row items-center justify-between w-full h-10 gap-1 px-4 py-5 text-sm font-medium border border-gray-200">
-          <img class="w-4 h-4 color-[#8c96ab]" src="/assets/images/b47c35fe28baffec.png" alt="">
+          <img class="w-4 h-4" src="/assets/images/b47c35fe28baffec.png" alt="">
           <div class="coin-name whitespace-nowrap flex items-center gap-1 text-black"><span>USDC</span></div>
-          <input type="text" class="bg-transparent border-none outline-none min-w-[20%] text-black">
-          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1 opacity-0"><span>Redeem
-              All</span></div>
+          <input type="text" class="bg-transparent border-none outline-none min-w-[20%] text-black text-right"
+            [value]="(exchangeETH * priceETH) | number:'1.2-5'" readonly>
+          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1 opacity-0">
+            <span>Redeem All</span>
+          </div>
         </div>
+
+        <button
+          class="form-button w-full h-10 flex items-center justify-center gap-2 text-sm font-medium text-center bg-[#19a29c] rounded-xl px-3 py-2.5 text-white"
+          matRipple matRippleColor="#ffffff80" (click)="exchange()">
+          Exchange
+        </button>
       </ng-container>
+
 
       <ng-container *ngIf="chooseTab ==2">
         <div class="form-title flex flex-row items-center justify-between w-full gap-4"><span
@@ -148,26 +164,30 @@
           class="custom-input rounded-xl flex flex-row items-center justify-between w-full h-10 gap-1 px-4 py-5 text-sm font-medium border border-gray-200">
           <img class="w-4 h-4 color-[#8c96ab]" src="/assets/images/b47c35fe28baffec.png" alt="">
           <div class="coin-name whitespace-nowrap flex items-center gap-1 text-black"><span>USDC</span></div>
-          <input type="text" class="bg-transparent border-none outline-none min-w-[20%] text-black">
-          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1"><span>Redeem All</span>
+          <input type="text" class="bg-transparent border-none outline-none min-w-[20%] text-black"
+            [(ngModel)]="withdrawAmount">
+          <div class="primary-color text-[#19a29c] whitespace-nowrap flex items-center gap-1 cursor-pointer"
+            (click)="redeemAllUSDC()">
+            <span>Redeem All</span>
           </div>
         </div>
         <div class="percentager-container grid w-full grid-cols-4 gap-2 text-black">
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 25% </div>
+            matRipple matRippleColor="#ffffff80" (click)="setWithdrawPercent(0.25)">25%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 50% </div>
+            matRipple matRippleColor="#ffffff80" (click)="setWithdrawPercent(0.5)">50%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80"> 75% </div>
+            matRipple matRippleColor="#ffffff80" (click)="setWithdrawPercent(0.75)">75%</div>
           <div class="h-8 flex cursor-pointer items-center justify-center border border-[#19a29c] rounded-lg text-black"
-            matRipple matRippleColor="#ffffff80">100%</div>
+            matRipple matRippleColor="#ffffff80" (click)="redeemAllUSDC()">100%</div>
         </div>
-      </ng-container>
 
-      <button
-        class="form-button w-full h-10 flex items-center justify-center gap-2 text-sm font-medium text-center bg-[#19a29c] rounded-xl px-3 py-2.5 text-white"
-        matRipple matRippleColor="#ffffff80">
-        Exchange</button>
+        <button
+          class="form-button w-full h-10 flex items-center justify-center gap-2 text-sm font-medium text-center bg-[#19a29c] rounded-xl px-3 py-2.5 text-white"
+          matRipple matRippleColor="#ffffff80" (click)="withdraw()">
+          Withdraw
+        </button>
+      </ng-container>
     </div>
 
   </div>

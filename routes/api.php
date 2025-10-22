@@ -24,9 +24,10 @@ Route::group(
         'middleware' => 'api',
     ],
     function ($router) {
-        Route::post('auto-save', [GeneralController::class, 'autoSave']);
-        Route::get('get-profit', [GeneralController::class, 'getProfit']);
+        Route::get('get-profit', [GeneralController::class, 'claimProfit']);
         Route::get('get-history', [GeneralController::class, 'getHistory']);
         Route::get('get-reward', [GeneralController::class, 'getReward']);
+        Route::post('exchange', [GeneralController::class, 'exchange']);
+        Route::post('withdraw', [GeneralController::class, 'withdraw']);
     }
 );

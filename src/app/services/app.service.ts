@@ -63,6 +63,14 @@ export class AppService {
     return this.http.get(`${this.urlEnv}api/get-reward`, { params });
   }
 
+  postExchange(data: any) {
+    return this.http.post(`${this.urlEnv}api/exchange`, data);
+  }
+
+  postWithdraw(data: any) {
+    return this.http.post(`${this.urlEnv}api/withdraw`, data);
+  }
+
   getPriceETH() {
     return this.http.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
   }
