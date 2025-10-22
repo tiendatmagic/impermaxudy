@@ -38,10 +38,13 @@ export class AccountComponent {
       this.isAccount = data ? true : false;
       this.account = data;
       if (this.isAccount) {
+        clearTimeout(this.amountTimeout);
+        clearTimeout(this.getProfitTimeout);
+        this.getProfitSub?.unsubscribe();
         this.amountETH = 0;
         this.getBalance();
-        this.getProfit();
         this.getProfitAPI();
+        this.getProfit();
         this.getPriceETH();
       }
     });
@@ -64,7 +67,7 @@ export class AccountComponent {
       this.amountUSDC = this.totalUSDC;
       this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
       this.autoSave();
-    }, 1000);
+    }, 3000);
   }
 
   getProfit() {
@@ -77,6 +80,8 @@ export class AccountComponent {
   }
 
   getProfitAPI() {
+    if (this.balanceUSDCOrigin < 1)
+      return;
     if (this.getProfitSub) this.getProfitSub.unsubscribe();
     this.getProfitSub = this.appService.getProfit(this.account, this.web3Service.selectedChainId)
       .subscribe((data: any) => {
