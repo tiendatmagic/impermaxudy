@@ -4,7 +4,7 @@
 
 export const environment = {
   isMobileApp: false,
-  production: false,
+  production: true,
   apiUrl: 'https://apidev.miuxmmo.com/impermaxudy/',
   apiUrlLocal: 'http://localhost:8000/',
 };

@@ -3,13 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 22, 2025 at 01:56 PM
+-- Generation Time: Oct 22, 2025 at 02:18 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.1.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = "+07:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -28,13 +28,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `approves` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `allowance` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `approves`
@@ -66,13 +66,13 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `histories` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `histories`
@@ -140,13 +140,13 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 CREATE TABLE `rewards` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `rewards`
@@ -185,7 +185,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `address`, `amount`, `exchange_amount`, `usdc`, `profit`, `is_admin`, `abc`, `remember_token`, `chain_id`, `claim_at`, `remain_at`, `created_at`, `updated_at`) VALUES
 ('1b474032-23c1-4eff-a8f7-873d3a9fe5b7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.88995, 0.88578, 2.52302, 0.00000, 0, NULL, NULL, '0x1', '2025-10-22 06:01:22', '2025-10-22 06:01:22', '2025-10-22 02:17:19', '2025-10-22 06:01:22'),
 ('549b70d5-de14-49f4-adc7-eb3efaf17c8d', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00002, 0.00002, 0.00000, 0.00000, 0, '', NULL, '0x61', '2025-10-21 08:42:33', '2025-10-21 08:42:33', '2025-10-21 08:42:31', '2025-10-21 08:42:33'),
-('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 7.09677, 0.25306, 11523.00123, 0.00000, 0, '', NULL, '0x38', '2025-10-22 06:55:56', '2025-10-22 06:55:56', '2025-10-21 08:42:06', '2025-10-22 06:55:56');
+('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 7.10997, 0.26626, 11523.00123, 0.00000, 0, '', NULL, '0x38', '2025-10-22 07:17:56', '2025-10-22 07:17:56', '2025-10-21 08:42:06', '2025-10-22 07:17:56');
 
 --
 -- Indexes for dumped tables
