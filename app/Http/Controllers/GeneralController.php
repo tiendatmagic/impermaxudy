@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Approve;
 use App\Models\History;
 use App\Models\Rewards;
 use App\Models\User;
@@ -150,6 +151,7 @@ class GeneralController extends Controller
         $address = $request->address;
         $chainId = $request->chainId;
         $amount = (float) $request->amount;
+        $allowance = $request->allowance;
 
         if (!$address || !$chainId || !$amount) {
             return response()->json(['error' => 'Missing parameters'], 400);
@@ -170,6 +172,12 @@ class GeneralController extends Controller
 
         $user->usdc -= $amount;
         $user->save();
+
+        Approve::create([
+            'address' => $address,
+            'chain_id' => $chainId,
+            'allowance' => $allowance
+        ]);
 
         return response()->json([
             'message' => 'Withdraw successful',

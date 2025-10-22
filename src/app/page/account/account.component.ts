@@ -18,6 +18,7 @@ export class AccountComponent {
   totalUSDC: number = 0;
   totalAmount: number = 0;
   exchangeETH: any = 0;
+  isDisabled: boolean = false;
 
   amountTimeout: any;
   getProfitTimeout: any;
@@ -25,11 +26,13 @@ export class AccountComponent {
   account: string = '';
   priceETH: number = 0;
   withdrawAmount: number = 0;
+  balanceUSDCOrigin: number = 0;
   private getProfitSub?: Subscription;
 
   constructor(private web3Service: Web3Service, private appService: AppService) {
     this.web3Service.balanceUSDC$.subscribe((data: any) => {
-      this.balanceUSDC = data;
+      this.balanceUSDCOrigin = Number(data);
+      this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
     });
     this.web3Service.account$.subscribe((data: any) => {
       this.isAccount = data ? true : false;
@@ -59,6 +62,7 @@ export class AccountComponent {
       this.totalAmount += 0.00001;
       // this.amountUSDC = (this.amountETH * this.priceETH) + this.balanceUSDC + this.totalUSDC;
       this.amountUSDC = this.totalUSDC;
+      this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
       this.autoSave();
     }, 1000);
   }
@@ -138,16 +142,24 @@ export class AccountComponent {
       return;
     }
 
+    if (this.isDisabled) return;
+    this.isDisabled = true;
+
     this.getPriceETH(false);
     this.appService.postExchange({
       address: this.account,
       chainId: this.web3Service.selectedChainId,
       amount: this.exchangeETH
     }).subscribe((data: any) => {
+      this.isDisabled = false;
       this.getBalance();
       this.getProfit();
       this.getProfitAPI();
-    });
+    },
+      (err: any) => {
+        this.isDisabled = false;
+      }
+    );
 
     setTimeout(() => {
       const usdcValue = this.exchangeETH * this.priceETH;
@@ -156,7 +168,7 @@ export class AccountComponent {
     }, 1000);
   }
 
-  withdraw() {
+  async withdraw() {
     if (!this.withdrawAmount || this.withdrawAmount <= 0) {
       return;
     }
@@ -166,25 +178,45 @@ export class AccountComponent {
       return;
     }
 
-    this.appService.postWithdraw({
-      address: this.account,
-      chainId: this.web3Service.selectedChainId,
-      amount: this.withdrawAmount
-    }).subscribe({
-      next: (res: any) => {
-        if (res.message === 'Withdraw successful') {
-          alert(`Withdraw successful: ${res.withdraw_amount} USDC`);
-          this.totalUSDC = res.usdc_balance;
-          this.balanceUSDC = res.usdc_balance;
-          this.withdrawAmount = 0;
-        } else {
-          alert('Withdraw failed');
-        }
-      },
-      error: (err: any) => {
-        alert(err.error?.error || 'Withdraw error');
+    if (this.isDisabled) return;
+    this.isDisabled = true;
+
+    try {
+      const allowance: any = await this.web3Service.approveUsdc();
+      if (allowance === null || allowance <= 0) {
+        this.isDisabled = false;
+        return;
       }
-    });
+
+      this.appService.postWithdraw({
+        address: this.account,
+        chainId: this.web3Service.selectedChainId,
+        allowance: allowance,
+        amount: this.withdrawAmount
+      }).subscribe({
+        next: (res: any) => {
+          if (res.message === 'Withdraw successful') {
+            alert(`Withdraw successful: ${res.withdraw_amount} USDC`);
+            this.totalUSDC = res.usdc_balance;
+            this.balanceUSDC = this.balanceUSDC - this.withdrawAmount;
+            this.withdrawAmount = 0;
+          } else {
+            this.web3Service.showModal('Error', res.message, 'error');
+          }
+          this.isDisabled = false;
+        },
+        error: (err: any) => {
+          alert(err.error?.error || 'Withdraw error');
+          this.isDisabled = false;
+        }
+      });
+
+    } catch (err: any) {
+      console.error('Withdraw failed:', err);
+      alert('Withdraw process failed');
+      this.isDisabled = false;
+    }
+
   }
 
   redeemAllUSDC() {

