@@ -21,7 +21,7 @@
   </div>
 
   <ng-container *ngIf="chooseTab == 1">
-    <ng-container *ngIf="!(account && data)">
+    <ng-container *ngIf="!(account && data.length)">
       <div class="min-h-40 flex items-center justify-center w-full">
         <div>
           <div class="my-5">
@@ -34,7 +34,7 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="(account && data)">
+    <ng-container *ngIf="(account && data.length)">
       <div class="flex items-center justify-between w-full gap-3" *ngFor="let item of data">
         <div>
           {{ account.slice(0, 5) }}...{{ account.slice(-5) }}
