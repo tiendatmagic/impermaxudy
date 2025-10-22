@@ -35,8 +35,10 @@ class GeneralController extends Controller
         $remainAt = Carbon::parse($user->remain_at);
 
         $seconds = $now->diffInSeconds($remainAt);
-        $profit = $seconds * 0.00001;
 
+        $profitUnits = floor($seconds / 3);
+
+        $profit = $profitUnits * 0.00001;
         return $profit;
     }
 
