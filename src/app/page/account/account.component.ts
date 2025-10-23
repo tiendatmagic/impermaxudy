@@ -50,6 +50,12 @@ export class AccountComponent {
     });
   }
 
+  ngOnInit() {
+    setTimeout(() => {
+      this.getProfit();
+    }, 5000);
+  }
+
   ngOnDestroy() {
     clearTimeout(this.amountTimeout);
     clearTimeout(this.getProfitTimeout);
