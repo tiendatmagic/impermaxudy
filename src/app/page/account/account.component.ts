@@ -41,11 +41,16 @@ export class AccountComponent {
         clearTimeout(this.amountTimeout);
         clearTimeout(this.getProfitTimeout);
         this.getProfitSub?.unsubscribe();
+        this.amountUSDC = 0;
         this.amountETH = 0;
+        this.totalAmount = 0;
         this.getBalance();
-        this.getProfitAPI();
-        this.getProfit();
-        this.getPriceETH();
+
+        if (this.balanceUSDCOrigin >= 1) {
+          this.getProfitAPI();
+          this.getProfit();
+          this.getPriceETH();
+        }
       }
     });
   }
