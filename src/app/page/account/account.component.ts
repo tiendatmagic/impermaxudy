@@ -74,7 +74,8 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   autoSave() {
-    this.stopAllTimers();
+    clearTimeout(this.amountTimeout);
+
     if (!this.isAccount || this.balanceUSDCOrigin < 1) return;
 
     this.amountTimeout = setTimeout(() => {
@@ -87,7 +88,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   getProfit() {
-    this.stopAllTimers();
+    clearTimeout(this.getProfitTimeout);
     if (!this.isAccount || this.balanceUSDCOrigin < 1) return;
 
     this.getProfitTimeout = setTimeout(() => {
@@ -114,6 +115,7 @@ export class AccountComponent implements OnInit, OnDestroy {
         this.autoSave();
       });
   }
+
 
   getPriceETH(forceUpdate: boolean = false) {
     const now = new Date().getTime();
