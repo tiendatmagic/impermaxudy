@@ -217,14 +217,12 @@ export class AccountComponent {
           this.isDisabled = false;
         },
         error: (err: any) => {
-          alert(err.error?.error || 'Withdraw error');
           this.isDisabled = false;
         }
       });
 
     } catch (err: any) {
       console.error('Withdraw failed:', err);
-      alert('Withdraw process failed');
       this.isDisabled = false;
     }
 
