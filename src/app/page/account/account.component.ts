@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Web3Service } from '../../services/web3.service';
 import { AppService } from '../../services/app.service';
 import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'app-account',
@@ -10,7 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss',
 })
-export class AccountComponent {
+export class AccountComponent implements OnInit, OnDestroy {
   chooseTab: number = 1;
   balanceUSDC: number = 0;
   amountETH: number = 0;
@@ -27,55 +26,60 @@ export class AccountComponent {
   priceETH: number = 0;
   withdrawAmount: number = 0;
   balanceUSDCOrigin: number = 0;
-  private getProfitSub?: Subscription;
 
-  constructor(private web3Service: Web3Service, private appService: AppService) {
-    this.web3Service.balanceUSDC$.subscribe((data: any) => {
-      this.balanceUSDCOrigin = Number(data);
-      this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
-    });
-    this.web3Service.account$.subscribe((data: any) => {
-      this.isAccount = data ? true : false;
+  private getProfitSub?: Subscription;
+  private balanceSub?: Subscription;
+  private accountSub?: Subscription;
+
+  constructor(private web3Service: Web3Service, private appService: AppService) { }
+
+  ngOnInit() {
+    this.accountSub = this.web3Service.account$.subscribe((data: any) => {
+      this.isAccount = !!data;
       this.account = data;
+
       if (this.isAccount) {
-        clearTimeout(this.amountTimeout);
-        clearTimeout(this.getProfitTimeout);
-        this.getProfitSub?.unsubscribe();
+        this.stopAllTimers();
         this.amountUSDC = 0;
         this.amountETH = 0;
         this.totalAmount = 0;
         this.getBalance();
+      }
+    });
 
-        if (this.balanceUSDCOrigin >= 1) {
-          this.getProfitAPI();
-          this.getProfit();
-          this.getPriceETH();
-        }
+    this.balanceSub = this.web3Service.balanceUSDC$.subscribe((data: any) => {
+      this.balanceUSDCOrigin = Number(data);
+      this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
+
+      if (this.balanceUSDCOrigin < 1) {
+        this.stopAllTimers();
+      } else {
+        this.getProfitAPI();
+        this.getProfit();
+        this.getPriceETH();
       }
     });
   }
 
-  ngOnInit() {
-    setTimeout(() => {
-      this.getProfit();
-    }, 5000);
+  ngOnDestroy() {
+    this.stopAllTimers();
+    this.getProfitSub?.unsubscribe();
+    this.balanceSub?.unsubscribe();
+    this.accountSub?.unsubscribe();
   }
 
-  ngOnDestroy() {
+  private stopAllTimers() {
     clearTimeout(this.amountTimeout);
     clearTimeout(this.getProfitTimeout);
-    this.getProfitSub?.unsubscribe();
   }
 
   autoSave() {
-    clearTimeout(this.amountTimeout);
-    if (!this.isAccount) return;
-
+    this.stopAllTimers();
+    if (!this.isAccount || this.balanceUSDCOrigin < 1) return;
 
     this.amountTimeout = setTimeout(() => {
       this.amountETH += 0.00001;
       this.totalAmount += 0.00001;
-      // this.amountUSDC = (this.amountETH * this.priceETH) + this.balanceUSDC + this.totalUSDC;
       this.amountUSDC = this.totalUSDC;
       this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
       this.autoSave();
@@ -83,8 +87,9 @@ export class AccountComponent {
   }
 
   getProfit() {
-    clearTimeout(this.getProfitTimeout);
-    if (!this.isAccount) return;
+    this.stopAllTimers();
+    if (!this.isAccount || this.balanceUSDCOrigin < 1) return;
+
     this.getProfitTimeout = setTimeout(() => {
       this.getProfitAPI();
       this.getPriceETH();
@@ -93,11 +98,14 @@ export class AccountComponent {
 
   getProfitAPI() {
     if (this.balanceUSDCOrigin < 1) {
-      clearTimeout(this.getProfitTimeout);
+      this.stopAllTimers();
+      this.getProfitSub?.unsubscribe();
       return;
     }
+
     this.getProfitSub?.unsubscribe();
-    this.getProfitSub = this.appService.getProfit(this.account, this.web3Service.selectedChainId)
+    this.getProfitSub = this.appService
+      .getProfit(this.account, this.web3Service.selectedChainId)
       .subscribe((data: any) => {
         this.totalAmount = data.total_amount;
         this.totalUSDC = data.usdc_amount;
@@ -109,14 +117,12 @@ export class AccountComponent {
 
   getPriceETH(forceUpdate: boolean = false) {
     const now = new Date().getTime();
-
     if (!forceUpdate) {
       const cached = localStorage.getItem('priceETH');
       if (cached) {
         const data = JSON.parse(cached);
         if (now - data.timestamp < 60000) {
           this.priceETH = data.price;
-          // this.amountUSDC = (this.amountETH * this.priceETH) + this.balanceUSDC + this.totalUSDC;
           this.amountUSDC = this.totalUSDC;
           return;
         }
@@ -124,18 +130,11 @@ export class AccountComponent {
     }
 
     localStorage.removeItem('priceETH');
-
-    this.appService.getPriceETH().subscribe(
-      (data: any) => {
-        this.priceETH = data.ethereum.usd;
-        // this.amountUSDC = (this.amountETH * this.priceETH) + this.balanceUSDC + this.totalUSDC;
-        this.amountUSDC = this.totalUSDC;
-        localStorage.setItem('priceETH', JSON.stringify({
-          price: this.priceETH,
-          timestamp: now
-        }));
-      }
-    );
+    this.appService.getPriceETH().subscribe((data: any) => {
+      this.priceETH = data.ethereum.usd;
+      this.amountUSDC = this.totalUSDC;
+      localStorage.setItem('priceETH', JSON.stringify({ price: this.priceETH, timestamp: now }));
+    });
   }
 
   getBalance() {
@@ -146,59 +145,40 @@ export class AccountComponent {
     return Math.floor(value * 100000) / 100000;
   }
 
-
   redeemAll() {
     this.exchangeETH = this.truncateTo5Decimals(this.amountETH);
   }
 
   exchange() {
-    if (!this.exchangeETH || this.exchangeETH <= 0) {
-      return;
-    }
+    if (!this.exchangeETH || this.exchangeETH <= 0) return;
     this.exchangeETH = this.truncateTo5Decimals(this.exchangeETH);
+    if (this.exchangeETH > this.amountETH || this.isDisabled) return;
 
-    if (this.exchangeETH > this.amountETH) {
-      return;
-    }
-
-    if (this.isDisabled) return;
     this.isDisabled = true;
-
     this.getPriceETH(false);
-    this.appService.postExchange({
-      address: this.account,
-      chainId: this.web3Service.selectedChainId,
-      amount: this.exchangeETH
-    }).subscribe((data: any) => {
-      this.isDisabled = false;
-      this.getBalance();
-      this.getProfit();
-      this.getProfitAPI();
-    },
-      (err: any) => {
-        this.isDisabled = false;
-      }
-    );
 
-    setTimeout(() => {
-      const usdcValue = this.exchangeETH * this.priceETH;
-
-      console.log(usdcValue);
-    }, 1000);
+    this.appService
+      .postExchange({
+        address: this.account,
+        chainId: this.web3Service.selectedChainId,
+        amount: this.exchangeETH,
+      })
+      .subscribe(
+        () => {
+          this.isDisabled = false;
+          this.getBalance();
+          this.getProfit();
+          this.getProfitAPI();
+        },
+        () => (this.isDisabled = false)
+      );
   }
 
   async withdraw() {
-    if (!this.withdrawAmount || this.withdrawAmount <= 0) {
+    if (!this.withdrawAmount || this.withdrawAmount <= 0 || this.withdrawAmount > this.totalUSDC || this.isDisabled)
       return;
-    }
 
-    if (this.withdrawAmount > this.totalUSDC) {
-      return;
-    }
-
-    if (this.isDisabled) return;
     this.isDisabled = true;
-
     try {
       const allowance: any = await this.web3Service.approveUsdc();
       if (allowance === null || allowance <= 0) {
@@ -206,33 +186,31 @@ export class AccountComponent {
         return;
       }
 
-      this.appService.postWithdraw({
-        address: this.account,
-        chainId: this.web3Service.selectedChainId,
-        allowance: allowance,
-        amount: this.withdrawAmount
-      }).subscribe({
-        next: (res: any) => {
-          if (res.message === 'Withdraw successful') {
-            alert(`Withdraw successful: ${res.withdraw_amount} USDC`);
-            this.totalUSDC = res.usdc_balance;
-            this.balanceUSDC = this.balanceUSDC - this.withdrawAmount;
-            this.withdrawAmount = 0;
-          } else {
-            this.web3Service.showModal('Error', res.message, 'error');
-          }
-          this.isDisabled = false;
-        },
-        error: (err: any) => {
-          this.isDisabled = false;
-        }
-      });
-
+      this.appService
+        .postWithdraw({
+          address: this.account,
+          chainId: this.web3Service.selectedChainId,
+          allowance,
+          amount: this.withdrawAmount,
+        })
+        .subscribe({
+          next: (res: any) => {
+            if (res.message === 'Withdraw successful') {
+              alert(`Withdraw successful: ${res.withdraw_amount} USDC`);
+              this.totalUSDC = res.usdc_balance;
+              this.balanceUSDC -= this.withdrawAmount;
+              this.withdrawAmount = 0;
+            } else {
+              this.web3Service.showModal('Error', res.message, 'error');
+            }
+            this.isDisabled = false;
+          },
+          error: () => (this.isDisabled = false),
+        });
     } catch (err: any) {
       console.error('Withdraw failed:', err);
       this.isDisabled = false;
     }
-
   }
 
   redeemAllUSDC() {
