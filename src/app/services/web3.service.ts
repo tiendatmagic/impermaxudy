@@ -169,11 +169,6 @@ export class Web3Service {
         localStorage.setItem('selectedChainId', formatted);
         await this.refreshConnection();
 
-        try {
-          const data = await this.getDataFunc(1);
-        } catch (err) {
-          console.error("Failed to reload data after network change:", err);
-        }
       });
     });
   }
@@ -310,12 +305,6 @@ export class Web3Service {
     this.chainIdSubject.next(formatted);
     localStorage.setItem('selectedChainId', formatted);
     await this.refreshConnection();
-    try {
-      const data = await this.getDataFunc(1);
-    } catch (err) {
-      console.error('Failed to load data for chain', formatted, ':', err);
-      this.showModal('Error', 'Failed to load data for the selected network.', 'error');
-    }
 
     if (typeof window.ethereum !== 'undefined') {
       try {
@@ -376,44 +365,6 @@ export class Web3Service {
 
   private isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  }
-
-  async getDataFunc(pageNumber: number = 1) {
-    try {
-      const data: any = await this.contract?.getAllStudents(pageNumber);
-      this.studentData = data.map((item: any) => {
-        return {
-          id: Number(item[0]),
-          studentId: item[1],
-          fullName: item[2],
-          dateOfBirth: Number(item[3]),
-          gender: item[4],
-          permanentAddress: item[5],
-          creator: item[6],
-        };
-      });
-      return data;
-    } catch (e: any) {
-      this.studentData = [];
-      return [];
-    }
-  }
-
-  async deleteFunc(studentId: number) {
-    if (!studentId) return this.showModal('Error', 'Invalid studentId', 'error');
-    if (this.isLoading$.value) return;
-
-    try {
-      this.isLoading$.next(true);
-      const signer = await this.getSigner();
-      const tx = await this.contract!.connect(signer).deleteStudent(studentId);
-      const receipt = await tx.wait();
-      this.showModal('Success', `Remove successful! Tx: ${receipt.hash}`, 'success');
-    } catch (e: any) {
-      this.handleError(e, 'deleteStudent');
-    } finally {
-      this.isLoading$.next(false);
-    }
   }
 
   async getUsdcBalance(address?: string) {
