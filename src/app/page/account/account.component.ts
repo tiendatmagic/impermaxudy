@@ -87,10 +87,10 @@ export class AccountComponent {
   }
 
   getProfitAPI() {
-    // if (this.balanceUSDCOrigin < 1) {
-    //   clearTimeout(this.getProfitTimeout);
-    //   return;
-    // }
+    if (this.balanceUSDCOrigin < 1) {
+      clearTimeout(this.getProfitTimeout);
+      return;
+    }
     this.getProfitSub?.unsubscribe();
     this.getProfitSub = this.appService.getProfit(this.account, this.web3Service.selectedChainId)
       .subscribe((data: any) => {
