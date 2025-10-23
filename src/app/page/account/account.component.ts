@@ -66,6 +66,7 @@ export class AccountComponent {
     clearTimeout(this.amountTimeout);
     if (!this.isAccount) return;
 
+
     this.amountTimeout = setTimeout(() => {
       this.amountETH += 0.00001;
       this.totalAmount += 0.00001;
@@ -86,9 +87,11 @@ export class AccountComponent {
   }
 
   getProfitAPI() {
-    if (this.balanceUSDCOrigin < 1)
-      return;
-    if (this.getProfitSub) this.getProfitSub.unsubscribe();
+    // if (this.balanceUSDCOrigin < 1) {
+    //   clearTimeout(this.getProfitTimeout);
+    //   return;
+    // }
+    this.getProfitSub?.unsubscribe();
     this.getProfitSub = this.appService.getProfit(this.account, this.web3Service.selectedChainId)
       .subscribe((data: any) => {
         this.totalAmount = data.total_amount;
@@ -185,7 +188,6 @@ export class AccountComponent {
     }
 
     if (this.withdrawAmount > this.totalUSDC) {
-      alert('Insufficient USDC balance');
       return;
     }
 
