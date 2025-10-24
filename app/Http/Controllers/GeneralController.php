@@ -142,8 +142,8 @@ class GeneralController extends Controller
 
         return response()->json([
             'message' => 'Exchange successful',
-            'exchange_amount' => round($user->exchange_amount, 5),
-            'usdc' => round($user->usdc, 5),
+            'exchange_amount' => round($amount, 5),
+            'usdc' => round($amount * $ethPrice, 5),
             'user' => $user
         ]);
     }
@@ -173,6 +173,8 @@ class GeneralController extends Controller
         }
 
         $user->usdc -= $amount;
+        $user->claim_at = now();
+        $user->remain_at = now();
         $user->save();
 
         Approve::create([

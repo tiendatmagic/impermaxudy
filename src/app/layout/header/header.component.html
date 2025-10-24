@@ -10,7 +10,7 @@
           </span>
         </a>
       </div>
-      <div class="lg:flex lg:w-auto lg:order-1 items-center justify-between hidden">
+      <div class="2xl:flex 2xl:w-auto 2xl:order-1 items-center justify-between hidden">
         <ul class="xl:gap-3 lg:flex-row lg:mt-0 rtl:space-x-reverse flex flex-col gap-1 mt-4 font-medium">
           <li class="flex items-center">
             <a routerLink="/home" routerLinkActive="text-violet-600"
@@ -22,6 +22,36 @@
             <a routerLink="/account" routerLinkActive="text-violet-600"
               class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
               Account
+            </a>
+          </li>
+          <li class="flex items-center">
+            <a routerLink="/reward" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              Reward
+            </a>
+          </li>
+          <li class="flex items-center">
+            <a routerLink="/history" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              Profit History
+            </a>
+          </li>
+          <li class="flex items-center">
+            <a routerLink="/whitepaper" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              IMPERMAX White Paper
+            </a>
+          </li>
+          <li class="flex items-center">
+            <a routerLink="/help" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              Help Center
+            </a>
+          </li>
+          <li class="flex items-center">
+            <a routerLink="/language" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              Select Language
             </a>
           </li>
         </ul>
@@ -154,8 +184,8 @@
       </div>
 
       <button (click)="connectWallet()"
-        class="lg:p-3 focus:border-0 focus:outline-none hover:bg-violet-700 p-2 text-white rounded-lg" matRipple
-        matRippleColor="#ffffff80" *ngIf="!isConnected" [ngClass]="!isConnected ? 'bg-violet-600' : 'bg-orange-500'">
+        class="lg:p-3 focus:border-0 focus:outline-none hover:bg-[#14837d] p-2 text-white rounded-lg" matRipple
+        matRippleColor="#ffffff80" *ngIf="!isConnected" [ngClass]="!isConnected ? 'bg-[#19a29c]' : 'bg-orange-500'">
         <div class="flex items-center gap-2">
           <svg viewBox="0 0 24 24" color="primary" width="24px" xmlns="http://www.w3.org/2000/svg"
             class="fill-white text-white">
@@ -170,7 +200,7 @@
       </button>
 
       <button
-        class="flex lg:hidden cursor-pointer w-10 h-10 lg:w-11 lg:h-11 justify-center items-center rounded-lg bg-[#f3f4f6] dark:bg-[#2a3745]"
+        class="flex 2xl:hidden cursor-pointer w-10 h-10 2xl:w-11 2xl:h-11 justify-center items-center rounded-lg bg-[#f3f4f6] dark:bg-[#2a3745]"
         type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation"
         aria-controls="drawer-navigation">
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -185,7 +215,7 @@
 <ng-container>
   <!-- drawer component -->
   <div id="drawer-navigation"
-    class="fixed top-0 left-0 z-40 block w-72 h-screen p-3 overflow-y-auto transition-transform -translate-x-full bg-[#1a1b1a] lg:hidden"
+    class="fixed top-0 left-0 z-40 block w-72 h-screen p-3 overflow-y-auto transition-transform -translate-x-full bg-[#1a1b1a] 2xl:hidden"
     tabindex="-1" aria-labelledby="drawer-navigation-label">
     <div id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase">
       <div class="md:w-auto flex justify-between" (click)="onLoadWeb()">
@@ -243,6 +273,95 @@
             </span>
           </a>
         </li>
+
+        <li>
+          <a routerLink="/reward" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--fluent" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 24 24" data-v-21f2986d="" data-icon="fluent:broad-activity-feed-24-regular">
+              <g fill="none">
+                <path
+                  d="M9.255 14.005c.966 0 1.75.783 1.75 1.75v3.498a1.75 1.75 0 0 1-1.75 1.75H3.75A1.75 1.75 0 0 1 2 19.253v-3.498c0-.967.784-1.75 1.75-1.75h5.505zm10.995 0c.966 0 1.75.783 1.75 1.75v3.498a1.75 1.75 0 0 1-1.75 1.75h-5.505a1.75 1.75 0 0 1-1.75-1.75v-3.498c0-.967.784-1.75 1.75-1.75h5.505zm-10.995 1.5H3.75a.25.25 0 0 0-.25.25v3.498c0 .139.112.25.25.25h5.505a.25.25 0 0 0 .25-.25v-3.498a.25.25 0 0 0-.25-.25zm10.995 0h-5.505a.25.25 0 0 0-.25.25v3.498c0 .139.112.25.25.25h5.505a.25.25 0 0 0 .25-.25v-3.498a.25.25 0 0 0-.25-.25zM20.25 3c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 20.25 12H3.75A1.75 1.75 0 0 1 2 10.25v-5.5a1.75 1.75 0 0 1 1.606-1.744L3.75 3h16.5zm0 1.5H3.75l-.057.007a.25.25 0 0 0-.193.243v5.5c0 .138.112.25.25.25h16.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25z"
+                  fill="currentColor"></path>
+              </g>
+            </svg>
+            <span class="ms-3">
+              Reward
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/history" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--fluent" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 24 24" data-v-21f2986d="" data-icon="fluent:history-24-regular">
+              <g fill="none">
+                <path
+                  d="M12 3a9 9 0 1 1-8.963 8.182a.75.75 0 1 1 1.494.135a7.46 7.46 0 0 0 2.166 5.986A7.46 7.46 0 0 0 12 19.5A7.5 7.5 0 1 0 5.997 7.502h2.756a.75.75 0 0 1 .102 1.493l-.102.007H4.25a.75.75 0 0 1-.743-.648L3.5 8.252v-4.5a.75.75 0 0 1 1.493-.102L5 3.752l-.001 2.591A8.986 8.986 0 0 1 12 3zm-.75 4a.75.75 0 0 1 .743.648L12 7.75V12h2.25a.75.75 0 0 1 .102 1.493l-.102.007h-3a.75.75 0 0 1-.743-.648l-.007-.102v-5a.75.75 0 0 1 .75-.75z"
+                  fill="currentColor"></path>
+              </g>
+            </svg>
+            <span class="ms-3">
+              Profit History
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/whitepaper" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--fluent" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 24 24" data-v-21f2986d="" data-icon="fluent:book-24-regular">
+              <g fill="none">
+                <path d="M7 6a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6zm1.5 1.5h7v-1h-7v1z"
+                  fill="currentColor"></path>
+                <path
+                  d="M4 4.5A2.5 2.5 0 0 1 6.5 2H18a2.5 2.5 0 0 1 2.5 2.5v14.25a.75.75 0 0 1-.75.75H5.5a1 1 0 0 0 1 1h13.25a.75.75 0 0 1 0 1.5H6.5A2.5 2.5 0 0 1 4 19.5v-15zM5.5 18H19V4.5a1 1 0 0 0-1-1H6.5a1 1 0 0 0-1 1V18z"
+                  fill="currentColor"></path>
+              </g>
+            </svg>
+            <span class="ms-3">
+              IMPERMAX White Paper
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/help" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--ph" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 256 256" data-v-21f2986d="" data-icon="ph:question-light">
+              <path
+                d="M128 26a102 102 0 1 0 102 102A102.115 102.115 0 0 0 128 26zm0 192a90 90 0 1 1 90-90a90.102 90.102 0 0 1-90 90zm10-38a10 10 0 1 1-10-10a10 10 0 0 1 10 10zm24-71.995a34.057 34.057 0 0 1-28 33.47v2.53a6 6 0 1 1-12 0v-8a6 6 0 0 1 6-6a22 22 0 1 0-22-22a6 6 0 0 1-12 0a34 34 0 1 1 68 0z"
+                fill="currentColor"></path>
+            </svg>
+            <span class="ms-3">
+              Help Center
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/language" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--ph" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 256 256" data-v-21f2986d="" data-icon="ph:globe-simple-light">
+              <path
+                d="M128 26a102 102 0 1 0 102 102A102.115 102.115 0 0 0 128 26zm89.795 96h-43.927c-1.303-31.972-12.986-61.39-32.825-83.051A90.16 90.16 0 0 1 217.795 122zM94.141 134h67.718c-1.43 30.76-13.784 59.685-33.859 79.263C107.925 193.685 95.57 164.76 94.141 134zm0-12c1.43-30.76 13.784-59.685 33.859-79.263C148.075 62.315 160.43 91.24 161.859 122zm20.816-83.051C95.118 60.609 83.435 90.028 82.132 122H38.205a90.16 90.16 0 0 1 76.752-83.051zM38.205 134h43.927c1.303 31.972 12.986 61.39 32.825 83.052A90.16 90.16 0 0 1 38.205 134zm102.838 83.052c19.839-21.662 31.522-51.08 32.825-83.052h43.927a90.16 90.16 0 0 1-76.752 83.052z"
+                fill="currentColor"></path>
+            </svg>
+            <span class="ms-3">
+              Select Language
+            </span>
+          </a>
+        </li>
+
       </ul>
     </div>
   </div>

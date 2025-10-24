@@ -30,8 +30,10 @@ export class AccountComponent implements OnInit, OnDestroy {
   private getProfitSub?: Subscription;
   private balanceSub?: Subscription;
   private accountSub?: Subscription;
+  private hasShownLowBalanceModal: boolean = false;
 
   constructor(private web3Service: Web3Service, private appService: AppService) { }
+
 
   ngOnInit() {
     this.accountSub = this.web3Service.account$.subscribe((data: any) => {
@@ -52,14 +54,20 @@ export class AccountComponent implements OnInit, OnDestroy {
       this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
 
       if (this.balanceUSDCOrigin < 1) {
+        if (!this.hasShownLowBalanceModal) {
+          this.web3Service.showModal('Error', 'Wallet balance is less than 1 USDC', 'error');
+          this.hasShownLowBalanceModal = true;
+        }
         this.stopAllTimers();
       } else {
+        this.hasShownLowBalanceModal = false;
         this.getProfitAPI();
         this.getProfit();
         this.getPriceETH();
       }
     });
   }
+
 
   ngOnDestroy() {
     this.stopAllTimers();
@@ -166,13 +174,16 @@ export class AccountComponent implements OnInit, OnDestroy {
         amount: this.exchangeETH,
       })
       .subscribe(
-        () => {
+        (data: any) => {
+          this.web3Service.showModal('Success', `Exchange successful: ${data.exchange_amount} ETH`, 'success');
           this.isDisabled = false;
           this.getBalance();
           this.getProfit();
           this.getProfitAPI();
         },
-        () => (this.isDisabled = false)
+        (error: any) => {
+          this.isDisabled = false;
+        }
       );
   }
 
@@ -198,7 +209,7 @@ export class AccountComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res.message === 'Withdraw successful') {
-              alert(`Withdraw successful: ${res.withdraw_amount} USDC`);
+              this.web3Service.showModal('Success', `Withdraw successful:${res.withdraw_amount} USDC`, 'success');
               this.totalUSDC = res.usdc_balance;
               this.balanceUSDC -= this.withdrawAmount;
               this.withdrawAmount = 0;

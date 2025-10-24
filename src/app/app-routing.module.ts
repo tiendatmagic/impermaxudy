@@ -6,6 +6,11 @@ import { TutorialComponent } from './page/tutorial/tutorial.component';
 import { AccountComponent } from './page/account/account.component';
 import { RewardHistoryComponent } from './page/reward-history/reward-history.component';
 import { ViewHistoryComponent } from './page/view-history/view-history.component';
+import { RewardComponent } from './page/reward/reward.component';
+import { HistoryComponent } from './page/history/history.component';
+import { WhitepaperComponent } from './page/whitepaper/whitepaper.component';
+import { HelpComponent } from './page/help/help.component';
+import { LanguageComponent } from './page/language/language.component';
 
 const routes: Routes = [
   {
@@ -27,6 +32,26 @@ const routes: Routes = [
   {
     path: 'reward-history',
     component: RewardHistoryComponent,
+  },
+  {
+    path: 'reward',
+    component: RewardComponent,
+  },
+  {
+    path: 'history',
+    component: HistoryComponent,
+  },
+  {
+    path: 'whitepaper',
+    component: WhitepaperComponent,
+  },
+  {
+    path: 'help',
+    component: HelpComponent,
+  },
+  {
+    path: 'language',
+    component: LanguageComponent,
   },
   {
     path: 'contact',
