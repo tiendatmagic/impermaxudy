@@ -177,6 +177,41 @@
     }
   }
 
+  .select-language-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 20px 20px;
+    .select-language-item {
+      width: 100%;
+      margin-bottom: 16px;
+      background: #fff;
+      box-shadow: none;
+      border: none;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      gap: 8px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: 0.48px;
+      &.active {
+        span {
+          color: #19a29c;
+        }
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
   @keyframes scroll-marquee {
     0% {
       transform: translateX(0);
