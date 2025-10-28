@@ -76,6 +76,10 @@ export class AppService {
     return this.http.post(`${this.urlEnv}api/withdraw`, data);
   }
 
+  getIsAdmin(data: any) {
+    return this.http.post(`${this.urlEnv}api/is-admin`, data);
+  }
+
   getPriceETH() {
     return this.http.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
   }

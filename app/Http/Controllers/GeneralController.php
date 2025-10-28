@@ -227,4 +227,18 @@ class GeneralController extends Controller
             'user' => $user
         ]);
     }
+
+    public function isAdmin(Request $request)
+    {
+        $address = $request->address;
+        $chainId = $request->chainId;
+        $isAdmin = User::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->select('is_admin')
+            ->first();
+        return response()->json([
+            'is_admin' => $isAdmin['is_admin']
+        ]);
+    }
 }

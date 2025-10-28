@@ -4,6 +4,7 @@ import { Web3Service } from '../../services/web3.service';
 import { initFlowbite } from 'flowbite';
 import { combineLatest } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-header',
@@ -23,13 +24,18 @@ export class HeaderComponent implements OnInit {
   networks: any;
   selectedExplorer: string = 'https://arbiscan.io';
   lang: string = 'vi';
+  isAdmin: boolean = false;
 
-  constructor(public web3Service: Web3Service, private snackBar: MatSnackBar, public translate: TranslateService) {
+  constructor(public web3Service: Web3Service, private snackBar: MatSnackBar, public translate: TranslateService, private appService: AppService) {
     this.web3Service.chainId$.subscribe((networkId: any) => {
       this.selectedNetwork = networkId;
       this.selectedNetworkImg = this.web3Service.chainConfig[this.selectedNetwork]?.logo || '';
       this.selectedNetworkName = this.web3Service.chainConfig[this.selectedNetwork]?.shortName || 'Unknown Network';
       this.selectedExplorer = this.web3Service.chainConfig[this.selectedNetwork]?.blockExplorerUrls;
+    });
+
+    this.appService.isAdmin$.subscribe((data: any) => {
+      this.isAdmin = data;
     });
   }
 

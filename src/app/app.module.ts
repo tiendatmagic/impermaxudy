@@ -29,6 +29,7 @@ import { HistoryComponent } from './page/history/history.component';
 import { WhitepaperComponent } from './page/whitepaper/whitepaper.component';
 import { HelpComponent } from './page/help/help.component';
 import { LanguageComponent } from './page/language/language.component';
+import { AdminComponent } from './page/admin/admin.component';
 
 const globalRippleConfig: RippleGlobalOptions = {
   animation: {
@@ -59,7 +60,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     HistoryComponent,
     WhitepaperComponent,
     HelpComponent,
-    LanguageComponent
+    LanguageComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
