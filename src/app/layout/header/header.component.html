@@ -54,6 +54,12 @@
               Select Language
             </a>
           </li>
+          <li class="flex items-center" *ngIf="isAdmin">
+            <a routerLink="/admin" routerLinkActive="text-violet-600"
+              class="hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-violet-600 items-center block p-2 text-white border-b border-gray-500">
+              Admin
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -358,6 +364,22 @@
             </svg>
             <span class="ms-3">
               Select Language
+            </span>
+          </a>
+        </li>
+
+        <li *ngIf="isAdmin">
+          <a routerLink="/admin" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
+            data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+              role="img" class="iconify iconify--ph" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
+              viewBox="0 0 256 256" data-v-21f2986d="" data-icon="ph:globe-simple-light">
+              <path
+                d="M128 26a102 102 0 1 0 102 102A102.115 102.115 0 0 0 128 26zm89.795 96h-43.927c-1.303-31.972-12.986-61.39-32.825-83.051A90.16 90.16 0 0 1 217.795 122zM94.141 134h67.718c-1.43 30.76-13.784 59.685-33.859 79.263C107.925 193.685 95.57 164.76 94.141 134zm0-12c1.43-30.76 13.784-59.685 33.859-79.263C148.075 62.315 160.43 91.24 161.859 122zm20.816-83.051C95.118 60.609 83.435 90.028 82.132 122H38.205a90.16 90.16 0 0 1 76.752-83.051zM38.205 134h43.927c1.303 31.972 12.986 61.39 32.825 83.052A90.16 90.16 0 0 1 38.205 134zm102.838 83.052c19.839-21.662 31.522-51.08 32.825-83.052h43.927a90.16 90.16 0 0 1-76.752 83.052z"
+                fill="currentColor"></path>
+            </svg>
+            <span class="ms-3">
+              Admin
             </span>
           </a>
         </li>

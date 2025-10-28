@@ -1,12 +1,14 @@
-<div class="bg-[#eef3f2]">
+<div class="bg-[#eef3f2] h-full">
   <div class="px-4 py-3">
     <p class="text-2xl font-medium">
-      Help Center
+      <ng-container *ngIf="!isChoose">
+        Help Center
+      </ng-container>
     </p>
   </div>
 
-  <div class="qna-body">
-    <div class="qna-item shadow-md">
+  <div class="qna-body" *ngIf="!isChoose">
+    <div class="qna-item shadow-md" (click)="openQna(1)">
       <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
           alt=""></div>
       <div class="content-body">
@@ -25,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div class="qna-item shadow-md">
+    <div class="qna-item shadow-md" (click)="openQna(2)">
       <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
           alt=""></div>
       <div class="content-body">
@@ -35,7 +37,7 @@
         </div>
       </div>
     </div>
-    <div class="qna-item shadow-md">
+    <div class="qna-item shadow-md" (click)="openQna(3)">
       <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
           alt=""></div>
       <div class="content-body">
@@ -45,7 +47,7 @@
         </div>
       </div>
     </div>
-    <div class="qna-item shadow-md">
+    <div class="qna-item shadow-md" (click)="openQna(4)">
       <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
           alt=""></div>
       <div class="content-body">
@@ -63,4 +65,73 @@
       </div>
     </div>
   </div>
+
+  <div class="" *ngIf="isChoose ==1">
+    <div class="help-center-intro-body">
+      <div class="content">
+        <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
+            alt=""></div>
+        <div class="content-title">How do I get involved?</div>
+        <div class="content-subtitle">
+          <p>1.Enter the wallet with its own Dapp browser</p>
+
+          <p>2.Link to&nbsp; USDC with impermax and deposit into your wallet</p>
+
+          <p>3.Enter the impermax interface through the wallet browser</p>
+
+          <p>4.Your wallet must have more than 200 USDC worth to participate in this project.</p>
+
+          <p>5.If the assets in your wallet are not transferred out within 24 hours, you can get the
+            corresponding&nbsp;output</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="" *ngIf="isChoose ==2">
+    <div class="help-center-intro-body">
+      <div class="content">
+        <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
+            alt=""></div>
+        <div class="content-title">How long does it take to participate in the&nbsp;benefits?</div>
+        <div class="content-subtitle">
+          <p>You can get 3 benefits within 24 hours, and the average output is once every 8hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="" *ngIf="isChoose ==3">
+    <div class="help-center-intro-body">
+      <div class="content">
+        <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
+            alt=""></div>
+        <div class="content-title">How long does it take to participate in the&nbsp;benefits?</div>
+        <div class="content-subtitle">
+          <p>You can get 3 benefits within 24 hours, and the average output is once every 8hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="" *ngIf="isChoose ==4">
+    <div class="help-center-intro-body">
+      <div class="content">
+        <div class="content-image"><img src="https://www.impermaxudy.com/upload/2216c48dfd639ca6/f4a93e9ad93caa4f.jpg"
+            alt=""></div>
+        <div class="content-title">How to calculate income?</div>
+        <div class="content-subtitle">
+          <p>268–5000 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;0.279%--0.290%<br>
+            5000–20000 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;0.290%--0.301%<br>
+            20000–50000 &nbsp; &nbsp; &nbsp; &nbsp;0.301%--0.313%<br>
+            50000–80000 &nbsp; &nbsp; &nbsp; &nbsp;0.313%--0.326%<br>
+            80000–150000 &nbsp; &nbsp; &nbsp;0.326%--0.340%<br>
+            150000-250000 &nbsp; &nbsp; 0.340%--0.355%<br>
+            250000-500000 &nbsp; &nbsp; 0.355%--0.371%<br>
+            500000-9999999 &nbsp; 0.371%--0.391%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

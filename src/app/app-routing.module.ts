@@ -11,6 +11,7 @@ import { HistoryComponent } from './page/history/history.component';
 import { WhitepaperComponent } from './page/whitepaper/whitepaper.component';
 import { HelpComponent } from './page/help/help.component';
 import { LanguageComponent } from './page/language/language.component';
+import { AdminComponent } from './page/admin/admin.component';
 
 const routes: Routes = [
   {
@@ -46,12 +47,20 @@ const routes: Routes = [
     component: WhitepaperComponent,
   },
   {
+    path: 'help/:id',
+    component: HelpComponent,
+  },
+  {
     path: 'help',
     component: HelpComponent,
   },
   {
     path: 'language',
     component: LanguageComponent,
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
   },
   {
     path: 'contact',

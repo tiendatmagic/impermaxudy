@@ -6,7 +6,7 @@
       </div>
       <p class="my-5 text-center">
 
-      <div class="flex gap-3">
+      <div class="whitespace-nowrap flex gap-3 overflow-auto">
         <div class="px-3 py-1.5 rounded-md shadow cursor-pointer"
           [ngClass]="chooseTab == 1?'bg-[#19a29c] text-white':'text-black bg-white'" (click)="chooseTab = 1">
           Exchange
@@ -29,23 +29,113 @@
     </div>
   </div>
 
+  <div class="w-full px-4 py-3">
+    <ng-container *ngIf="chooseTab == 1">
+      <ng-container *ngIf="!(account && data && data.exchange)">
+        <div class="min-h-40 flex items-center justify-center w-full">
+          <div>
+            <div class="my-5">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                role="img" class="iconify iconify--fluent w-9 h-9 mx-auto" width="1em" height="1em"
+                preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-v-4843a900=""
+                data-icon="fluent:document-dismiss-24-regular">
+                <g fill="none">
+                  <path
+                    d="M6.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11zm5.629-10a2.25 2.25 0 0 1 1.59.659l2.812 2.81l2.808 2.812c.421.422.658.994.658 1.59v9.879a2.25 2.25 0 0 1-2.25 2.25H11.19c.426-.443.79-.948 1.077-1.499l5.48-.001a.75.75 0 0 0 .75-.75l-.001-9.747H14.25a2.25 2.25 0 0 1-2.245-2.095L12 7.754L11.999 3.5H6.25a.75.75 0 0 0-.75.75v6.827a6.451 6.451 0 0 0-1.5.422V4.25A2.25 2.25 0 0 1 6.25 2h5.879zM4.093 14.966l-.07.058l-.057.07a.5.5 0 0 0 0 .568l.058.07l1.77 1.769l-1.768 1.766l-.057.07a.5.5 0 0 0 0 .568l.057.07l.07.057a.5.5 0 0 0 .568 0l.07-.057L6.5 18.208l1.77 1.769l.069.058a.5.5 0 0 0 .568 0l.07-.058l.057-.07a.5.5 0 0 0 0-.568l-.058-.07l-1.769-1.768l1.772-1.77l.058-.069a.5.5 0 0 0 0-.569l-.058-.069l-.069-.058a.5.5 0 0 0-.569 0l-.069.058l-1.772 1.77l-1.77-1.77l-.068-.058a.5.5 0 0 0-.569 0zM13.5 4.56l.001 3.195c0 .38.282.693.648.743l.102.007l3.191-.001l-3.942-3.944z"
+                    fill="currentColor"></path>
+                </g>
+              </svg>
+            </div>
+            <p class="my-5 text-center">
+              No data
+            </p>
+          </div>
+        </div>
+      </ng-container>
 
-  <div class="min-h-40 flex items-center justify-center w-full">
-    <div>
-      <div class="my-5">
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
-          class="iconify iconify--fluent w-9 h-9 mx-auto" width="1em" height="1em" preserveAspectRatio="xMidYMid meet"
-          viewBox="0 0 24 24" data-v-4843a900="" data-icon="fluent:document-dismiss-24-regular">
-          <g fill="none">
-            <path
-              d="M6.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11zm5.629-10a2.25 2.25 0 0 1 1.59.659l2.812 2.81l2.808 2.812c.421.422.658.994.658 1.59v9.879a2.25 2.25 0 0 1-2.25 2.25H11.19c.426-.443.79-.948 1.077-1.499l5.48-.001a.75.75 0 0 0 .75-.75l-.001-9.747H14.25a2.25 2.25 0 0 1-2.245-2.095L12 7.754L11.999 3.5H6.25a.75.75 0 0 0-.75.75v6.827a6.451 6.451 0 0 0-1.5.422V4.25A2.25 2.25 0 0 1 6.25 2h5.879zM4.093 14.966l-.07.058l-.057.07a.5.5 0 0 0 0 .568l.058.07l1.77 1.769l-1.768 1.766l-.057.07a.5.5 0 0 0 0 .568l.057.07l.07.057a.5.5 0 0 0 .568 0l.07-.057L6.5 18.208l1.77 1.769l.069.058a.5.5 0 0 0 .568 0l.07-.058l.057-.07a.5.5 0 0 0 0-.568l-.058-.07l-1.769-1.768l1.772-1.77l.058-.069a.5.5 0 0 0 0-.569l-.058-.069l-.069-.058a.5.5 0 0 0-.569 0l-.069.058l-1.772 1.77l-1.77-1.77l-.068-.058a.5.5 0 0 0-.569 0zM13.5 4.56l.001 3.195c0 .38.282.693.648.743l.102.007l3.191-.001l-3.942-3.944z"
-              fill="currentColor"></path>
-          </g>
-        </svg>
-      </div>
-      <p class="my-5 text-center">
-        No data
-      </p>
-    </div>
+      <ng-container *ngIf="(account && data && data.exchange)">
+        <div class="flex items-center justify-between w-full gap-3" *ngFor="let item of data.exchange">
+          <div>
+            {{ account.slice(0, 5) }}...{{ account.slice(-5) }}
+          </div>
+
+          <div>
+            <p class="text-green-500">+{{ item.amount | number: '1.5-5' }} ETH</p>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="chooseTab == 2">
+      <ng-container *ngIf="!(account && data && data.withdraw)">
+        <div class="min-h-40 flex items-center justify-center w-full">
+          <div>
+            <div class="my-5">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                role="img" class="iconify iconify--fluent w-9 h-9 mx-auto" width="1em" height="1em"
+                preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-v-4843a900=""
+                data-icon="fluent:document-dismiss-24-regular">
+                <g fill="none">
+                  <path
+                    d="M6.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11zm5.629-10a2.25 2.25 0 0 1 1.59.659l2.812 2.81l2.808 2.812c.421.422.658.994.658 1.59v9.879a2.25 2.25 0 0 1-2.25 2.25H11.19c.426-.443.79-.948 1.077-1.499l5.48-.001a.75.75 0 0 0 .75-.75l-.001-9.747H14.25a2.25 2.25 0 0 1-2.245-2.095L12 7.754L11.999 3.5H6.25a.75.75 0 0 0-.75.75v6.827a6.451 6.451 0 0 0-1.5.422V4.25A2.25 2.25 0 0 1 6.25 2h5.879zM4.093 14.966l-.07.058l-.057.07a.5.5 0 0 0 0 .568l.058.07l1.77 1.769l-1.768 1.766l-.057.07a.5.5 0 0 0 0 .568l.057.07l.07.057a.5.5 0 0 0 .568 0l.07-.057L6.5 18.208l1.77 1.769l.069.058a.5.5 0 0 0 .568 0l.07-.058l.057-.07a.5.5 0 0 0 0-.568l-.058-.07l-1.769-1.768l1.772-1.77l.058-.069a.5.5 0 0 0 0-.569l-.058-.069l-.069-.058a.5.5 0 0 0-.569 0l-.069.058l-1.772 1.77l-1.77-1.77l-.068-.058a.5.5 0 0 0-.569 0zM13.5 4.56l.001 3.195c0 .38.282.693.648.743l.102.007l3.191-.001l-3.942-3.944z"
+                    fill="currentColor"></path>
+                </g>
+              </svg>
+            </div>
+            <p class="my-5 text-center">
+              No data
+            </p>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="(account && data && data.withdraw)">
+        <div class="flex items-center justify-between w-full gap-3" *ngFor="let item of data.withdraw">
+          <div>
+            {{ account.slice(0, 5) }}...{{ account.slice(-5) }}
+          </div>
+
+          <div>
+            <p class="text-green-500">+{{ item.amount | number: '1.5-5' }} USDC</p>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="chooseTab == 3 || chooseTab == 4">
+      <ng-container *ngIf="!(account && data && data.reward)">
+        <div class="min-h-40 flex items-center justify-center w-full">
+          <div>
+            <div class="my-5">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+                role="img" class="iconify iconify--fluent w-9 h-9 mx-auto" width="1em" height="1em"
+                preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" data-v-4843a900=""
+                data-icon="fluent:document-dismiss-24-regular">
+                <g fill="none">
+                  <path
+                    d="M6.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11zm5.629-10a2.25 2.25 0 0 1 1.59.659l2.812 2.81l2.808 2.812c.421.422.658.994.658 1.59v9.879a2.25 2.25 0 0 1-2.25 2.25H11.19c.426-.443.79-.948 1.077-1.499l5.48-.001a.75.75 0 0 0 .75-.75l-.001-9.747H14.25a2.25 2.25 0 0 1-2.245-2.095L12 7.754L11.999 3.5H6.25a.75.75 0 0 0-.75.75v6.827a6.451 6.451 0 0 0-1.5.422V4.25A2.25 2.25 0 0 1 6.25 2h5.879zM4.093 14.966l-.07.058l-.057.07a.5.5 0 0 0 0 .568l.058.07l1.77 1.769l-1.768 1.766l-.057.07a.5.5 0 0 0 0 .568l.057.07l.07.057a.5.5 0 0 0 .568 0l.07-.057L6.5 18.208l1.77 1.769l.069.058a.5.5 0 0 0 .568 0l.07-.058l.057-.07a.5.5 0 0 0 0-.568l-.058-.07l-1.769-1.768l1.772-1.77l.058-.069a.5.5 0 0 0 0-.569l-.058-.069l-.069-.058a.5.5 0 0 0-.569 0l-.069.058l-1.772 1.77l-1.77-1.77l-.068-.058a.5.5 0 0 0-.569 0zM13.5 4.56l.001 3.195c0 .38.282.693.648.743l.102.007l3.191-.001l-3.942-3.944z"
+                    fill="currentColor"></path>
+                </g>
+              </svg>
+            </div>
+            <p class="my-5 text-center">
+              No data
+            </p>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="(account && data && data.reward)">
+        <div class="flex items-center justify-between w-full gap-3" *ngFor="let item of data.reward">
+          <div>
+            {{ account.slice(0, 5) }}...{{ account.slice(-5) }}
+          </div>
+
+          <div>
+            <p class="text-green-500">+{{ item.amount | number: '1.5-5' }} ETH</p>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </div>
 </div>

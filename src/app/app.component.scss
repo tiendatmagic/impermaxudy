@@ -212,6 +212,42 @@
     }
   }
 
+  .help-center-intro-body {
+    padding: 0 20px;
+    .content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: #fff;
+      box-shadow: none;
+      border: none;
+      border-radius: 12px;
+      .content-image {
+        border-radius: 16px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 16px;
+        }
+      }
+      .content-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #1a1b1a;
+      }
+      .content-subtitle {
+        font-weight: 500;
+        font-size: 14px;
+        color: #8c96ab;
+      }
+    }
+  }
+
   @keyframes scroll-marquee {
     0% {
       transform: translateX(0);

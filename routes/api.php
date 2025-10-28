@@ -26,8 +26,10 @@ Route::group(
     function ($router) {
         Route::get('get-profit', [GeneralController::class, 'claimProfit']);
         Route::get('get-history', [GeneralController::class, 'getHistory']);
+        Route::get('get-all-history', [GeneralController::class, 'getAllHistory']);
         Route::get('get-reward', [GeneralController::class, 'getReward']);
         Route::post('exchange', [GeneralController::class, 'exchange']);
         Route::post('withdraw', [GeneralController::class, 'withdraw']);
+        Route::post('is-admin', [GeneralController::class, 'isAdmin']);
     }
 );

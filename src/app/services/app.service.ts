@@ -58,6 +58,11 @@ export class AppService {
     return this.http.get(`${this.urlEnv}api/get-history`, { params });
   }
 
+  getAllHistory(address: string, chainId: string) {
+    const params = { address: address.toLowerCase(), chainId: chainId };
+    return this.http.get(`${this.urlEnv}api/get-all-history`, { params });
+  }
+
   getReward(address: string, chainId: string) {
     const params = { address: address.toLowerCase(), chainId: chainId };
     return this.http.get(`${this.urlEnv}api/get-reward`, { params });
@@ -69,6 +74,10 @@ export class AppService {
 
   postWithdraw(data: any) {
     return this.http.post(`${this.urlEnv}api/withdraw`, data);
+  }
+
+  getIsAdmin(data: any) {
+    return this.http.post(`${this.urlEnv}api/is-admin`, data);
   }
 
   getPriceETH() {

@@ -248,6 +248,9 @@ export class Web3Service {
     this.isConnectedSubject.next(true);
     await this.getBalance(account);
     await this.getUsdcBalance(account);
+    this.appService.getIsAdmin({ address: account, chainId: this.selectedChainId }).subscribe((data: any) => {
+      this.appService.isAdmin = data.is_admin;
+    });
   }
 
   disconnectWallet() {

@@ -53,7 +53,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       this.balanceUSDCOrigin = Number(data);
       this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
 
-      if (this.balanceUSDCOrigin < 1) {
+      if (this.balanceUSDCOrigin < 1 && this.isAccount) {
         if (!this.hasShownLowBalanceModal) {
           this.web3Service.showModal('Error', 'Wallet balance is less than 1 USDC', 'error');
           this.hasShownLowBalanceModal = true;
@@ -209,7 +209,7 @@ export class AccountComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             if (res.message === 'Withdraw successful') {
-              this.web3Service.showModal('Success', `Withdraw successful:${res.withdraw_amount} USDC`, 'success');
+              this.web3Service.showModal('Success', `Withdraw successful: ${res.withdraw_amount} USDC`, 'success');
               this.totalUSDC = res.usdc_balance;
               this.balanceUSDC -= this.withdrawAmount;
               this.withdrawAmount = 0;
