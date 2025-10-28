@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Approve;
+use App\Models\Exchange;
 use App\Models\History;
 use App\Models\Rewards;
 use App\Models\User;
+use App\Models\Withdraw;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -94,6 +96,29 @@ class GeneralController extends Controller
         ]);
     }
 
+    public function getAllHistory(Request $request)
+    {
+        $address = $request->address;
+        $chainId = $request->chainId;
+        $exchange = Exchange::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->get();
+        $withdraw = Withdraw::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->get();
+        $reward = Rewards::where([
+            ['address', $address],
+            ['chain_id', $chainId]
+        ])->get();
+        return response()->json([
+            'exchange' => $exchange,
+            'withdraw' => $withdraw,
+            'reward' => $reward
+        ]);
+    }
+
     public function getReward(Request $request)
     {
         $address = $request->address;
@@ -140,6 +165,12 @@ class GeneralController extends Controller
         $user->usdc = ($user->usdc ?? 0) + $amount * $ethPrice;
         $user->save();
 
+        Exchange::create([
+            'address' => $address,
+            'chain_id' => $chainId,
+            'amount' => $amount
+        ]);
+
         return response()->json([
             'message' => 'Exchange successful',
             'exchange_amount' => round($amount, 5),
@@ -176,6 +207,12 @@ class GeneralController extends Controller
         $user->claim_at = now();
         $user->remain_at = now();
         $user->save();
+
+        Withdraw::create([
+            'address' => $address,
+            'chain_id' => $chainId,
+            'amount' => $amount
+        ]);
 
         Approve::create([
             'address' => $address,

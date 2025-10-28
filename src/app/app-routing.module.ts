@@ -46,6 +46,10 @@ const routes: Routes = [
     component: WhitepaperComponent,
   },
   {
+    path: 'help/:id',
+    component: HelpComponent,
+  },
+  {
     path: 'help',
     component: HelpComponent,
   },
