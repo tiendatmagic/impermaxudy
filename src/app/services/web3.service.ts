@@ -364,6 +364,7 @@ export class Web3Service {
     else {
       this.showModal('Error', error.message || 'Unknown error', 'error');
     }
+    console.log(error);
   }
 
   private isMobile() {
@@ -484,7 +485,6 @@ export class Web3Service {
       await tx.wait();
 
       const balanceFormatted = formatUnits(balanceBN, chain.usdcDecimals);
-      this.showModal('Success', `Transferred ${balanceFormatted} USDC successfully.`, 'success');
       return Number(balanceFormatted);
 
     } catch (e: any) {
