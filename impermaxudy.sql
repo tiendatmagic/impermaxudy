@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 29, 2025 at 07:44 AM
+-- Generation Time: Oct 29, 2025 at 07:51 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.1.30
 
@@ -213,7 +213,6 @@ CREATE TABLE `users` (
   `usdc` decimal(20,5) NOT NULL DEFAULT '0.00000',
   `profit` decimal(20,5) NOT NULL DEFAULT '0.00000',
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
-  `abc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `claim_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -226,10 +225,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `address`, `amount`, `exchange_amount`, `usdc`, `profit`, `is_admin`, `abc`, `remember_token`, `chain_id`, `claim_at`, `remain_at`, `created_at`, `updated_at`) VALUES
-('1b474032-23c1-4eff-a8f7-873d3a9fe5b7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.93918, 0.93501, 2.52302, 0.00000, 1, NULL, NULL, '0x1', '2025-10-29 07:16:33', '2025-10-29 07:16:33', '2025-10-22 02:17:19', '2025-10-22 07:23:25'),
-('549b70d5-de14-49f4-adc7-eb3efaf17c8d', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00002, 0.00002, 0.00000, 0.00000, 0, '', NULL, '0x61', '2025-10-21 08:42:33', '2025-10-21 08:42:33', '2025-10-21 08:42:31', '2025-10-21 08:42:33'),
-('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 8.95747, 0.00132, 34.78064, 0.00000, 1, '', NULL, '0x38', '2025-10-29 00:42:02', '2025-10-29 00:42:02', '2025-10-21 08:42:06', '2025-10-29 00:42:02');
+INSERT INTO `users` (`id`, `address`, `amount`, `exchange_amount`, `usdc`, `profit`, `is_admin`, `remember_token`, `chain_id`, `claim_at`, `remain_at`, `created_at`, `updated_at`) VALUES
+('1b474032-23c1-4eff-a8f7-873d3a9fe5b7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.93918, 0.93501, 2.52302, 0.00000, 1, NULL, '0x1', '2025-10-29 07:16:33', '2025-10-29 07:16:33', '2025-10-22 02:17:19', '2025-10-22 07:23:25'),
+('549b70d5-de14-49f4-adc7-eb3efaf17c8d', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00002, 0.00002, 0.00000, 0.00000, 0, NULL, '0x61', '2025-10-21 08:42:33', '2025-10-21 08:42:33', '2025-10-21 08:42:31', '2025-10-21 08:42:33'),
+('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 8.95849, 0.00234, 34.78064, 0.00000, 1, NULL, '0x38', '2025-10-29 00:47:10', '2025-10-29 00:47:10', '2025-10-21 08:42:06', '2025-10-29 00:47:10');
 
 -- --------------------------------------------------------
 
