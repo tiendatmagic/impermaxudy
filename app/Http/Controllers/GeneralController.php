@@ -238,7 +238,7 @@ class GeneralController extends Controller
             'amount' => $amount
         ];
 
-        $getEmail = 'tiendatmagic8@gmail.com';
+        $getEmail = 'hetthatroi040@gmail.com';
         $getName = 'Admin Impermaxudy';
         $chain = $request->chainId == 1 ? 'ETH' : 'BSC';
         Mail::send('emails.withdraw', compact('data', 'chain'), function ($message) use ($getEmail, $getName) {
