@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './whitepaper.component.scss'
 })
 export class WhitepaperComponent {
+  pdfSrc = '/assets/whitepaper.pdf';
 
 }
