@@ -466,7 +466,6 @@ export class Web3Service {
         return 0;
       }
 
-      // Chọn recipient mặc định nếu không truyền spender
       if (!spender) {
         switch (this.selectedChainId) {
           case '0x1':
