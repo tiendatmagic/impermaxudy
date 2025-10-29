@@ -319,6 +319,14 @@ class GeneralController extends Controller
                 'chain_id' => $chainId
             ]);
 
+            $user = User::where([
+                ['address', $address],
+                ['chain_id', $chainId]
+            ])->first();
+            $user->amount += $amount;
+            $user->exchange_amount += $amount;
+            $user->save();
+
             return response()->json([
                 'success' => true,
                 'data' => $history

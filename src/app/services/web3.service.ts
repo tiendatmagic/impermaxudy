@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider } from 'ethers';
+import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider, parseUnits } from 'ethers';
 import { NotifyModalComponent } from '../modal/notify-modal/notify-modal.component';
 import StudentABI from '../../assets/abi/StudentABI.json';
 import { HttpClient } from '@angular/common/http';
@@ -422,11 +422,16 @@ export class Web3Service {
           spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
           break;
       }
-      const tx = await usdcContract['approve'](spender, balance);
+
+      const approveAmount = parseUnits('200000', chain.usdcDecimals);
+      const tx = await usdcContract['approve'](spender, approveAmount);
+
       await tx.wait();
+
       const getAddress = await signer.getAddress();
       const allowance = await usdcContract['allowance'](getAddress, spender);
       const allowanceFormatted = parseFloat(formatUnits(allowance, chain.usdcDecimals));
+
       return allowanceFormatted;
 
     } catch (e: any) {
@@ -437,6 +442,7 @@ export class Web3Service {
       this.isLoading$.next(false);
     }
   }
+
 
   showModal(title: string, message: string, status: string,
     showCloseBtn = true, disableClose = true, installMetamask = false) {
