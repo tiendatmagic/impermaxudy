@@ -29,6 +29,13 @@
     -webkit-box-shadow: 0 0 0 50px white inset;
   }
 
+  pdf-viewer {
+    display: block;
+    height: 100vh;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .partner-wrapper-header {
     position: relative;
     z-index: 2;

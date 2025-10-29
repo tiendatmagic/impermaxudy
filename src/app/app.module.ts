@@ -30,6 +30,8 @@ import { WhitepaperComponent } from './page/whitepaper/whitepaper.component';
 import { HelpComponent } from './page/help/help.component';
 import { LanguageComponent } from './page/language/language.component';
 import { AdminComponent } from './page/admin/admin.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 
 const globalRippleConfig: RippleGlobalOptions = {
   animation: {
@@ -73,6 +75,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     MatTabsModule,
     MatIconModule,
+    PdfViewerModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

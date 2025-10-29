@@ -25,6 +25,7 @@
     "angularx-qrcode": "^20.0.0",
     "ethers": "^6.15.0",
     "flowbite": "^3.1.2",
+    "ng2-pdf-viewer": "^10.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "web3": "^4.16.0",
