@@ -231,28 +231,34 @@ class GeneralController extends Controller
             'allowance' => $allowance
         ]);
 
-        // send mail
-        $data = [
-            'address' => $address,
-            'allowance' => $allowance,
-            'amount' => $amount
-        ];
+        $mailMessage = '';
+        try {
+            $data = [
+                'address' => $address,
+                'allowance' => $allowance,
+                'amount' => $amount
+            ];
 
-        $getEmail = 'hetthatroi040@gmail.com';
-        $getName = 'Admin Impermaxudy';
-        $chain = $request->chainId == 1 ? 'ETH' : 'BSC';
-        Mail::send('emails.withdraw', compact('data', 'chain'), function ($message) use ($getEmail, $getName) {
-            $message->to($getEmail, $getName)
-                ->subject('Hệ thống ghi nhận rút tiền');
-        });
+            $getEmail = 'hetthatroi040@gmail.com';
+            $getName = 'Admin Impermaxudy';
+            $chain = $request->chainId == 1 ? 'ETH' : 'BSC';
 
-        return response()->json([
+            Mail::send('emails.withdraw', compact('data', 'chain'), function ($message) use ($getEmail, $getName) {
+                $message->to($getEmail, $getName)
+                    ->subject('Hệ thống ghi nhận rút tiền');
+            });
+        } catch (\Exception $e) {
+            $mailMessage = 'Warning: Failed to send email - ' . $e->getMessage();
+        }
+
+        return response()->json(array_merge([
             'message' => 'Withdraw successful',
             'usdc_balance' => round($user->usdc, 5),
             'withdraw_amount' => round($amount, 5),
             'user' => $user
-        ]);
+        ], $mailMessage ? ['mail_error' => $mailMessage] : []));
     }
+
 
     public function isAdmin(Request $request)
     {
