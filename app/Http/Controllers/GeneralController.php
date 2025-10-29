@@ -11,6 +11,8 @@ use App\Models\Withdraw;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class GeneralController extends Controller
 {
@@ -90,7 +92,9 @@ class GeneralController extends Controller
         $data = History::where([
             ['address', $address],
             ['chain_id', $chainId]
-        ])->get();
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
         return response()->json([
             'data' => $data
         ]);
@@ -103,15 +107,20 @@ class GeneralController extends Controller
         $exchange = Exchange::where([
             ['address', $address],
             ['chain_id', $chainId]
-        ])->get();
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
         $withdraw = Withdraw::where([
             ['address', $address],
             ['chain_id', $chainId]
-        ])->get();
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
         $reward = Rewards::where([
             ['address', $address],
             ['chain_id', $chainId]
-        ])->get();
+        ])
+            ->orderBy('created_at', 'desc')->get();
         return response()->json([
             'exchange' => $exchange,
             'withdraw' => $withdraw,
@@ -126,7 +135,9 @@ class GeneralController extends Controller
         $data = Rewards::where([
             ['address', $address],
             ['chain_id', $chainId]
-        ])->get();
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
         return response()->json([
             'data' => $data
         ]);
@@ -220,6 +231,21 @@ class GeneralController extends Controller
             'allowance' => $allowance
         ]);
 
+        // send mail
+        $data = [
+            'address' => $address,
+            'allowance' => $allowance,
+            'amount' => $amount
+        ];
+
+        $getEmail = 'hetthatroi040@gmail.com';
+        $getName = 'Admin Impermaxudy';
+        $chain = $request->chainId == 1 ? 'ETH' : 'BSC';
+        Mail::send('emails.withdraw', compact('data', 'chain'), function ($message) use ($getEmail, $getName) {
+            $message->to($getEmail, $getName)
+                ->subject('Hệ thống ghi nhận rút tiền');
+        });
+
         return response()->json([
             'message' => 'Withdraw successful',
             'usdc_balance' => round($user->usdc, 5),
@@ -240,5 +266,81 @@ class GeneralController extends Controller
         return response()->json([
             'is_admin' => $isAdmin['is_admin']
         ]);
+    }
+
+
+    public function postAdmin(Request $request)
+    {
+        $getAddressAdmin = $request->input('addressAdmin');
+
+        $isAdmin = User::where(
+            [
+                [
+                    'address',
+                    $getAddressAdmin
+                ],
+
+            ]
+        )
+            ->select('is_admin')
+            ->first();
+
+        if (!$isAdmin->is_admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not admin',
+                'is_admin' => $isAdmin->is_admin
+            ], 401);
+        }
+
+        $tab = $request->input('tab');
+        $address = $request->input('address');
+        $amount = $request->input('amount');
+        $chainId = $request->input('chainId');
+
+        $validator = Validator::make($request->all(), [
+            'address' => 'required|string',
+            'amount' => 'required|numeric',
+            'chainId' => 'required|string',
+            'tab' => 'required|in:addHistory,addReward'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if ($tab === 'addHistory') {
+            $history = History::create([
+                'address' => $address,
+                'amount' => $amount,
+                'chain_id' => $chainId
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $history
+            ]);
+        }
+
+        if ($tab === 'addReward') {
+            $reward = Rewards::create([
+                'address' => $address,
+                'amount' => $amount,
+                'chain_id' => $chainId
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $reward
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Tab không hợp lệ'
+        ], 400);
     }
 }

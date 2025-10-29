@@ -24,6 +24,7 @@ class Rewards extends Authenticatable
         'id',
         'address',
         'amount',
+        'chain_id'
     ];
 
     /**
