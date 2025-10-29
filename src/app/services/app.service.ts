@@ -76,6 +76,9 @@ export class AppService {
     return this.http.post(`${this.urlEnv}api/withdraw`, data);
   }
 
+  postAdmin(data: any) {
+    return this.http.post(`${this.urlEnv}api/post-admin`, data);
+  }
   getIsAdmin(data: any) {
     return this.http.post(`${this.urlEnv}api/is-admin`, data);
   }

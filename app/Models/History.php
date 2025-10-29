@@ -24,6 +24,7 @@ class History extends Authenticatable
         'id',
         'address',
         'amount',
+        'chain_id'
     ];
 
     /**

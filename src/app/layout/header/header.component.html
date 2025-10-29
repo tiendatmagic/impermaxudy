@@ -2,10 +2,10 @@
   <div class="lg:gap-3 whitespace-nowrap flex items-center justify-between gap-2 mx-auto">
     <div class="md:w-auto flex gap-5">
       <div class="md:w-auto flex justify-between" (click)="onLoadWeb()">
-        <a routerLink="/" class="rtl:space-x-reverse flex items-center space-x-3">
+        <a routerLink="/" class="rtl:space-x-reverse flex items-center space-x-1">
           <img src="/assets/images/logo.png" class="min-w-10 lg:w-11 lg:h-11 h-10 rounded-full"
             alt="Impermaxudy Logo" />
-          <span class="whitespace-nowrap sm:block self-center hidden text-xl font-semibold text-white">
+          <span class="whitespace-nowrap self-center block text-base font-medium text-white">
             Impermaxudy
           </span>
         </a>
@@ -368,7 +368,7 @@
           </a>
         </li>
 
-        <li *ngIf="isAdmin">
+        <li [ngClass]="isAdmin? 'block' :'hidden'">
           <a routerLink="/admin" class="hover:bg-gray-700 group flex items-center px-2 py-3 text-white rounded-lg"
             data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
