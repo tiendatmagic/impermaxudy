@@ -1,27 +1,25 @@
 <div class="bg-[#eef3f2] h-full">
-  <div class="w-full px-4 py-3">
+  <div class="w-full px-4">
     <div>
-      <div class="my-5">
 
-      </div>
-      <p class="my-5 text-center">
+      <p class="mx-5 text-center">
 
-      <div class="whitespace-nowrap flex gap-3 overflow-auto">
-        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer"
+      <div class="whitespace-nowrap flex gap-3 py-5 overflow-auto">
+        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer" matRipple
           [ngClass]="chooseTab == 1?'bg-[#19a29c] text-white':'text-black bg-white'" (click)="chooseTab = 1">
           Exchange
         </div>
 
-        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer"
+        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer" matRipple
           [ngClass]="chooseTab == 2?'bg-[#19a29c] text-white':'text-black bg-white'" (click)="chooseTab = 2">
           Withdrawal details
         </div>
 
-        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer"
+        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer" matRipple
           [ngClass]="chooseTab == 3?'bg-[#19a29c] text-white':'text-black bg-white'" (click)="chooseTab = 3">
           Node reward
         </div>
-        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer"
+        <div class="px-3 py-1.5 rounded-md shadow cursor-pointer" matRipple
           [ngClass]="chooseTab == 4?'bg-[#19a29c] text-white':'text-black bg-white'" (click)="chooseTab = 4">
           Savings reward
         </div>
