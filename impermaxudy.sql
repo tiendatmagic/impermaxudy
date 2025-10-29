@@ -1,15 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: localhost
--- Thời gian đã tạo: Th10 23, 2025 lúc 04:01 PM
--- Phiên bản máy phục vụ: 10.6.20-MariaDB-cll-lve-log
--- Phiên bản PHP: 8.2.21
+-- Host: localhost:3306
+-- Generation Time: Oct 29, 2025 at 07:44 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.1.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = "+07:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -18,87 +18,119 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `xomdoxythosting_impermaxudy`
+-- Database: `impermaxudy`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `approves`
+-- Table structure for table `approves`
 --
 
 CREATE TABLE `approves` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `allowance` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `approves`
+-- Dumping data for table `approves`
 --
 
 INSERT INTO `approves` (`id`, `address`, `allowance`, `chain_id`, `created_at`, `updated_at`) VALUES
+('03b56de1-90bb-4998-a847-cb75269f7bcf', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-29 00:37:07', '2025-10-29 00:37:07'),
+('200e079e-0170-4c55-9aab-d9d2ff8b7eb8', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-29 00:36:00', '2025-10-29 00:36:00'),
 ('3f53f9af-6cac-4ecd-8576-e19e308d2394', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.08323, '0x38', '2025-10-22 06:55:01', '2025-10-22 06:55:01'),
-('491b83da-1ca6-4870-8057-7578d4ec0788', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-23 05:39:27', '2025-10-23 05:39:27');
+('40d7d816-2708-4822-8151-dc0e57fae0c3', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-29 00:39:27', '2025-10-29 00:39:27'),
+('617e3700-afe6-4a02-b615-55eff5fd3877', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-29 00:41:17', '2025-10-29 00:41:17'),
+('76002cea-1856-4a6f-8235-3a53fe62da13', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-24 00:09:11', '2025-10-24 00:09:11'),
+('89e9aa52-949e-4eae-ba68-d6aa0480f056', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-28 09:54:41', '2025-10-28 09:54:41'),
+('f23ec02f-fe41-4368-9495-cb978ce67fc7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.06718, '0x38', '2025-10-28 08:48:59', '2025-10-28 08:48:59');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `failed_jobs`
+-- Table structure for table `exchanges`
+--
+
+CREATE TABLE `exchanges` (
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` decimal(20,5) NOT NULL,
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `exchanges`
+--
+
+INSERT INTO `exchanges` (`id`, `address`, `amount`, `chain_id`, `created_at`, `updated_at`) VALUES
+('1b41361a-7df2-4215-a533-239b1c49baea', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.08566, '0x38', '2025-10-29 00:34:19', '2025-10-29 00:34:19'),
+('2eea5e6f-e240-4c1f-9fe2-66850ca57480', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00793, '0x38', '2025-10-28 09:52:16', '2025-10-28 09:52:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `histories`
+-- Table structure for table `histories`
 --
 
 CREATE TABLE `histories` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `histories`
+-- Dumping data for table `histories`
 --
 
 INSERT INTO `histories` (`id`, `address`, `amount`, `chain_id`, `created_at`, `updated_at`) VALUES
-('02279d94-ae99-11f0-938e-145afc8b417b', '0x8DD6df4849eD1197aD15606222d6Cc7E68423247', 1.00000, '0x1', '2025-10-21 16:14:23', '2025-10-21 16:14:23'),
-('02279d94-ae99-11f0-938e-145afc8b817b', '0x8DD6df4849eD1197aD15606222d6Cc7E68423247', 1.00000, '0x38', '2025-10-23 05:22:07', '2025-10-23 05:22:07'),
-('02279d94-ae99-11f0-938e-145afc9b217a', '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888', 10.00000, '0x1', '2025-10-23 05:18:12', '2025-10-23 05:18:12'),
-('02279d94-ae99-11f0-938e-145afc9b817a', '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888', 2.00000, '0x38', '2025-10-23 05:18:12', '2025-10-23 05:18:12');
+('125d1d45-97f5-4f3b-aac1-cc6c885aa484', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x38', '2025-10-29 00:09:06', '2025-10-29 00:09:06'),
+('785ce86c-2af4-4d2d-b0c4-d364f1ca3cf1', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x38', '2025-10-29 00:09:06', '2025-10-29 00:09:06'),
+('bf76040a-f32f-43e3-9095-87ee3f391004', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:12:05', '2025-10-29 00:12:05'),
+('c5cd4a83-93b6-4747-bf91-fb0e21c6adad', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:16:39', '2025-10-29 00:16:39'),
+('cdd985e8-c06b-44a4-ae80-bca86de808b4', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 2.00000, '0x1', '2025-10-29 00:08:24', '2025-10-29 00:08:24'),
+('ef448fad-8b51-46ff-8982-b2ce9d6dcdc0', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 2.00000, '0x1', '2025-10-29 00:08:25', '2025-10-29 00:08:25'),
+('fcf6c3a6-d5b1-427e-a01c-ef1a35c97291', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x38', '2025-10-29 00:09:07', '2025-10-29 00:09:07');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `migrations`
+-- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `migrations`
+-- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -110,28 +142,28 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `password_resets`
+-- Table structure for table `password_resets`
 --
 
 CREATE TABLE `password_resets` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `personal_access_tokens`
+-- Table structure for table `personal_access_tokens`
 --
 
 CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -140,96 +172,134 @@ CREATE TABLE `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `rewards`
+-- Table structure for table `rewards`
 --
 
 CREATE TABLE `rewards` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(20,5) NOT NULL,
-  `chain_id` varchar(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `chain_id` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `rewards`
+-- Dumping data for table `rewards`
 --
 
 INSERT INTO `rewards` (`id`, `address`, `amount`, `chain_id`, `created_at`, `updated_at`) VALUES
-('02279d94-ae99-11f0-938e-145afc8b817a', '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888', 0.00060, '0x1', '2025-10-21 16:26:32', '2025-10-21 16:26:32');
+('02279d94-ae93-11f0-938e-145afc8b817a', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.00000, '0x38', '2025-10-28 17:24:08', '2025-10-28 17:24:08'),
+('02279d94-ae99-11f0-938e-145afc8b817a', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00060, '0x1', '2025-10-28 17:24:08', '2025-10-28 17:24:08'),
+('309971a4-bc38-4ebf-b223-28245ba12a13', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 40.00000, '0x1', '2025-10-29 00:18:38', '2025-10-29 00:18:38'),
+('6e6f7ab2-36ab-4b09-8b29-2929106d81b0', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:08:43', '2025-10-29 00:08:43'),
+('8af25503-c343-4d90-b1ce-44d8b64901ac', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:08:43', '2025-10-29 00:08:43'),
+('8c0f01b0-cf7c-419c-a0e8-96ea40ef4332', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:08:42', '2025-10-29 00:08:42'),
+('a238984e-5931-4067-a7a4-fb183243264a', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 3.00000, '0x1', '2025-10-29 00:08:43', '2025-10-29 00:08:43'),
+('bbfebdd9-fb87-4298-a06b-7f508c59569c', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 40.00000, '0x38', '2025-10-29 00:18:42', '2025-10-29 00:18:42'),
+('e2591203-73e4-4a2d-95a5-2b2e8bb9d99a', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 50.00000, '0x38', '2025-10-29 00:19:36', '2025-10-29 00:19:36');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `id` char(36) NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `amount` decimal(20,5) NOT NULL DEFAULT 0.00000,
-  `exchange_amount` decimal(20,5) NOT NULL DEFAULT 0.00000,
-  `usdc` decimal(20,5) NOT NULL DEFAULT 0.00000,
-  `profit` decimal(20,5) NOT NULL DEFAULT 0.00000,
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
-  `abc` varchar(10) DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `chain_id` varchar(10) NOT NULL,
-  `claim_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `remain_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` decimal(20,5) NOT NULL DEFAULT '0.00000',
+  `exchange_amount` decimal(20,5) NOT NULL DEFAULT '0.00000',
+  `usdc` decimal(20,5) NOT NULL DEFAULT '0.00000',
+  `profit` decimal(20,5) NOT NULL DEFAULT '0.00000',
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `abc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `chain_id` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `claim_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `remain_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `address`, `amount`, `exchange_amount`, `usdc`, `profit`, `is_admin`, `abc`, `remember_token`, `chain_id`, `claim_at`, `remain_at`, `created_at`, `updated_at`) VALUES
-('1b474032-23c1-4eff-a8f7-873d3a9fe5b7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 1.40640, 0.10543, 4988.29682, 0.00000, 0, NULL, NULL, '0x1', '2025-10-23 07:59:05', '2025-10-23 07:59:05', '2025-10-22 02:17:19', '2025-10-23 07:59:05'),
-('30d8e614-ab74-48e5-bd4c-fc2f5ec6e07d', '0x8dd6df4849ed1197ad15606222d6cc7e68423247', 0.18854, 0.01189, 678.19128, 0.00000, 0, NULL, NULL, '0x1', '2025-10-22 23:27:43', '2025-10-22 23:27:43', '2025-10-22 07:57:53', '2025-10-22 23:27:43'),
+('1b474032-23c1-4eff-a8f7-873d3a9fe5b7', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.93918, 0.93501, 2.52302, 0.00000, 1, NULL, NULL, '0x1', '2025-10-29 07:16:33', '2025-10-29 07:16:33', '2025-10-22 02:17:19', '2025-10-22 07:23:25'),
 ('549b70d5-de14-49f4-adc7-eb3efaf17c8d', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 0.00002, 0.00002, 0.00000, 0.00000, 0, '', NULL, '0x61', '2025-10-21 08:42:33', '2025-10-21 08:42:33', '2025-10-21 08:42:31', '2025-10-21 08:42:33'),
-('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 7.77079, 0.03878, 325.42957, 0.00000, 0, '', NULL, '0x38', '2025-10-23 09:01:37', '2025-10-23 09:01:37', '2025-10-21 08:42:06', '2025-10-23 09:01:37'),
-('b83cc5f8-799e-4738-b780-66dae381339a', '0x8dd6df4849ed1197ad15606222d6cc7e68423247', 0.00000, 0.00000, 0.00000, 0.00000, 0, NULL, NULL, '0x38', '2025-10-22 22:44:06', '2025-10-22 22:44:06', '2025-10-22 22:44:06', '2025-10-22 22:44:06');
+('93cbbe3d-5f69-4e0b-a55c-93e2bf54c7c2', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 8.95747, 0.00132, 34.78064, 0.00000, 1, '', NULL, '0x38', '2025-10-29 00:42:02', '2025-10-29 00:42:02', '2025-10-21 08:42:06', '2025-10-29 00:42:02');
+
+-- --------------------------------------------------------
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Table structure for table `withdraws`
+--
+
+CREATE TABLE `withdraws` (
+  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` decimal(20,5) NOT NULL,
+  `chain_id` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `withdraws`
+--
+
+INSERT INTO `withdraws` (`id`, `address`, `amount`, `chain_id`, `created_at`, `updated_at`) VALUES
+('0fe93db6-cefa-47df-83ba-b13ff2dd65ce', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 100.00000, '0x38', '2025-10-29 00:36:00', '2025-10-29 00:36:00'),
+('31cfd134-e9f5-4688-97a7-da151667f1ed', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 100.00000, '0x38', '2025-10-29 00:39:27', '2025-10-29 00:39:27'),
+('7622725c-e59f-4752-af8c-bb5fcca0393b', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 10.00000, '0x38', '2025-10-29 00:41:17', '2025-10-29 00:41:17'),
+('a931e1dc-eff5-4fbc-b7ad-863e0d97ae24', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 51.82330, '0x38', '2025-10-28 09:54:41', '2025-10-28 09:54:41'),
+('f7e48f68-f854-4269-9640-26bec3eae630', '0x535b7a99caf6f73697e69becb437b6ba4b788888', 100.00000, '0x38', '2025-10-29 00:37:07', '2025-10-29 00:37:07');
+
+--
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `approves`
+-- Indexes for table `approves`
 --
 ALTER TABLE `approves`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `failed_jobs`
+-- Indexes for table `exchanges`
+--
+ALTER TABLE `exchanges`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Chỉ mục cho bảng `histories`
+-- Indexes for table `histories`
 --
 ALTER TABLE `histories`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `migrations`
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `password_resets`
+-- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
 
 --
--- Chỉ mục cho bảng `personal_access_tokens`
+-- Indexes for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
@@ -237,38 +307,44 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
--- Chỉ mục cho bảng `rewards`
+-- Indexes for table `rewards`
 --
 ALTER TABLE `rewards`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- Indexes for table `withdraws`
+--
+ALTER TABLE `withdraws`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `failed_jobs`
+-- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `migrations`
+-- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `personal_access_tokens`
+-- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
