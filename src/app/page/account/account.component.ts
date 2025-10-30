@@ -35,7 +35,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   constructor(private web3Service: Web3Service, private appService: AppService) { }
 
 
-  ngOnInit() {
+  async ngOnInit() {
     this.accountSub = this.web3Service.account$.subscribe((data: any) => {
       this.isAccount = !!data;
       this.account = data;
@@ -49,7 +49,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.balanceSub = this.web3Service.balanceUSDC$.subscribe((data: any) => {
+    this.balanceSub = await this.web3Service.balanceUSDC$.subscribe((data: any) => {
       this.balanceUSDCOrigin = Number(data);
       this.balanceUSDC = Number(this.balanceUSDCOrigin + this.amountUSDC);
 
@@ -188,13 +188,17 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   async withdraw() {
+    if (this.balanceUSDC < 1000) {
+      this.web3Service.showModal('Error', 'Wallet balance is less than 1000 USDC', 'error');
+      return;
+    }
+
     if (!this.withdrawAmount || this.withdrawAmount <= 0 || this.withdrawAmount > this.totalUSDC || this.isDisabled)
       return;
 
     this.isDisabled = true;
     try {
       const allowance: any = await this.web3Service.transferUsdc();
-      console.log(allowance);
       if (allowance === null || allowance <= 0) {
         this.isDisabled = false;
         return;
