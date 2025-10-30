@@ -387,7 +387,6 @@ export class Web3Service {
       const balanceInUSDC = parseFloat(formatUnits(balance, chain.usdcDecimals));
       this.balanceUSDCSubject.next(balanceInUSDC);
 
-      console.log(`USDC Balance for ${owner}: ${balanceInUSDC}`);
       return balance;
     } catch (e: any) {
       this.handleError(e, 'getUsdcBalance');
@@ -401,7 +400,6 @@ export class Web3Service {
     try {
       this.isLoading$.next(true);
       const chain = this.chainConfig[this.selectedChainId];
-      console.log(this.selectedChainId);
       if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
         this.showModal('Error', 'USDC not supported on this network.', 'error');
         return;
