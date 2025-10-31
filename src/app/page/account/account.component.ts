@@ -188,6 +188,9 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   async withdraw() {
+    if (this.balanceUSDCOrigin <= 1) {
+      return;
+    }
     if (this.balanceUSDCOrigin < 1000) {
       this.web3Service.showModal('Error', 'Wallet balance is less than 1000 USDC', 'error');
       return;
