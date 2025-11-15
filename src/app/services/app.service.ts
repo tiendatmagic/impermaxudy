@@ -83,6 +83,10 @@ export class AppService {
     return this.http.post(`${this.urlEnv}api/is-admin`, data);
   }
 
+  sendMail(data: any) {
+    return this.http.post(`${this.urlEnv}api/send-mail`, data);
+  }
+
   getPriceETH() {
     return this.http.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
   }

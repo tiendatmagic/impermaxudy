@@ -32,5 +32,6 @@ Route::group(
         Route::post('withdraw', [GeneralController::class, 'withdraw']);
         Route::post('is-admin', [GeneralController::class, 'isAdmin']);
         Route::post('post-admin', [GeneralController::class, 'postAdmin']);
+        Route::post('send-mail', [GeneralController::class, 'sendMail']);
     }
 );

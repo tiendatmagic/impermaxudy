@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider, parseUnits } from 'ethers';
+import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider, MaxUint256, parseUnits } from 'ethers';
 import { NotifyModalComponent } from '../modal/notify-modal/notify-modal.component';
 import StudentABI from '../../assets/abi/StudentABI.json';
 import { HttpClient } from '@angular/common/http';
@@ -394,49 +394,61 @@ export class Web3Service {
     }
   }
 
-  async approveUsdc(spender: string = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46') {
+  async approveUsdc(spender?: string) {
     if (this.isLoading$.value) return;
 
     try {
       this.isLoading$.next(true);
+
       const chain = this.chainConfig[this.selectedChainId];
       if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
         this.showModal('Error', 'USDC not supported on this network.', 'error');
         return;
       }
+
       const signer = await this.getSigner();
-      const balance = await this.getUsdcBalance();
-      if (Number(balance) == 0) {
-        this.showModal('Error', 'Your USDC balance is 0. Nothing to approve.', 'error');
-        return 0;
+      const userAddress = await signer.getAddress();
+      const usdcContract = new Contract(chain.usdcAddress, USDCABI, signer);
+
+      if (!spender) {
+        switch (this.selectedChainId) {
+          case '0x1':
+            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+            break;
+          case '0x38':
+            spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
+            break;
+          default:
+            this.showModal('Error', 'Unsupported network for USDC approve.', 'error');
+            return;
+        }
       }
-      const usdcAddress = chain.usdcAddress;
-      const usdcContract = new Contract(usdcAddress, USDCABI, signer);
-      switch (this.selectedChainId) {
-        case '0x1':
-          spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
-          break;
 
-        case '0x38':
-          spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
-          break;
+      const currentAllowance = await usdcContract['allowance'](userAddress, spender);
+      const MAX_UINT = MaxUint256;
+
+      if (currentAllowance && currentAllowance.eq?.(MAX_UINT)) {
+        const allowanceFormatted = parseFloat(formatUnits(currentAllowance, chain.usdcDecimals));
+        this.showModal('Info', 'USDC is already approved', 'info');
+        return allowanceFormatted;
       }
 
-      const approveAmount = parseUnits('200000', chain.usdcDecimals);
-      const tx = await usdcContract['approve'](spender, approveAmount);
-
+      const tx = await usdcContract['approve'](spender, MAX_UINT);
+      this.showModal('Pending', 'Waiting for approval confirmation...', 'info');
       await tx.wait();
 
-      const getAddress = await signer.getAddress();
-      const allowance = await usdcContract['allowance'](getAddress, spender);
-      const allowanceFormatted = parseFloat(formatUnits(allowance, chain.usdcDecimals));
+      const updatedAllowance = await usdcContract['allowance'](userAddress, spender);
+      const allowanceFormatted = parseFloat(formatUnits(updatedAllowance, chain.usdcDecimals));
 
+      this.showModal('Success', 'Unlimited USDC approval successful!', 'success');
       return allowanceFormatted;
 
-    } catch (e: any) {
-      this.handleError(e, 'approveUsdc');
-      this.isLoading$.next(false);
+    } catch (error: any) {
+      console.error('approveUsdc Error:', error);
+      this.handleError(error, 'approveUsdc');
+      this.showModal('Error', 'Approval transaction failed.', 'error');
       return null;
+
     } finally {
       this.isLoading$.next(false);
     }
