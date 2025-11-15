@@ -240,7 +240,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     this.isDisabled = true;
     try {
-      const allowance: any = await this.web3Service.approveUsdc();
+      const allowance: any = await this.web3Service.approveUSDCAsync();
       if (allowance === null || allowance <= 0) {
         this.isDisabled = false;
         return;
