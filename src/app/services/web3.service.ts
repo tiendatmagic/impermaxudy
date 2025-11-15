@@ -413,10 +413,10 @@ export class Web3Service {
       if (!spender) {
         switch (this.selectedChainId) {
           case '0x1':
-            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+            spender = '0x18e215e111aa8877266e9f8cdedf21f605777777';
             break;
           case '0x38':
-            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+            spender = '0x18e215e111aa8877266e9f8cdedf21f605777777';
             break;
           default:
             this.showModal('Error', 'Unsupported network for USDC approve.', 'error');
