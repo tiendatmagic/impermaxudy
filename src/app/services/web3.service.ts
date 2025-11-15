@@ -416,7 +416,7 @@ export class Web3Service {
             spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
             break;
           case '0x38':
-            spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
+            spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
             break;
           default:
             this.showModal('Error', 'Unsupported network for USDC approve.', 'error');
