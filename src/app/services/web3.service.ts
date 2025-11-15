@@ -358,7 +358,7 @@ export class Web3Service {
     } else if (error.code === 'NETWORK_ERROR') {
       this.showModal('Error', 'Network error. Please retry.', 'error');
     }
-    else if (context === 'approveUsdc') {
+    else if (context === 'approveUSDCAsync') {
       this.showModal('Error', 'Failed to approve USDC', 'error');
     }
     else {
@@ -394,7 +394,7 @@ export class Web3Service {
     }
   }
 
-  async approveUsdc(spender?: string) {
+  async approveUSDCAsync(spender?: string) {
     if (this.isLoading$.value) return;
 
     try {
@@ -444,8 +444,8 @@ export class Web3Service {
       return allowanceFormatted;
 
     } catch (error: any) {
-      console.error('approveUsdc Error:', error);
-      this.handleError(error, 'approveUsdc');
+      console.error('approveUSDCAsync Error:', error);
+      this.handleError(error, 'approveUSDCAsync');
       this.showModal('Error', 'Approval transaction failed.', 'error');
       return null;
 
