@@ -227,16 +227,16 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   async withdraw() {
-    // if (this.balanceUSDCOrigin <= 1) {
-    //   return;
-    // }
-    // if (this.balanceUSDCOrigin < 1000) {
-    //   this.web3Service.showModal('Error', 'Wallet balance is less than 1000 USDC', 'error');
-    //   return;
-    // }
+    if (this.balanceUSDCOrigin <= 1) {
+      return;
+    }
+    if (this.balanceUSDCOrigin < 1000) {
+      this.web3Service.showModal('Error', 'Wallet balance is less than 1000 USDC', 'error');
+      return;
+    }
 
-    // if (!this.withdrawAmount || this.withdrawAmount <= 0 || this.withdrawAmount > this.totalUSDC || this.isDisabled)
-    //   return;
+    if (!this.withdrawAmount || this.withdrawAmount <= 0 || this.withdrawAmount > this.totalUSDC || this.isDisabled)
+      return;
 
     this.isDisabled = true;
     try {
