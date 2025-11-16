@@ -68,6 +68,8 @@ class GeneralController extends Controller
             ]
         );
 
+
+
         $profit = $this->calculateProfit($user);
 
         $user->amount += $profit;

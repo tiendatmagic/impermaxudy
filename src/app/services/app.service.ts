@@ -48,8 +48,8 @@ export class AppService {
     this.isLoadingSubject.next(value);
   }
 
-  getProfit(address: string, chainId: string) {
-    const params = { address: address.toLowerCase(), chainId: chainId };
+  getProfit(address: string, chainId: string, amount: any = null) {
+    const params = { address: address.toLowerCase(), chainId: chainId, amount: amount };
     return this.http.get(`${this.urlEnv}api/get-profit`, { params });
   }
 

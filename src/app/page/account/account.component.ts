@@ -153,7 +153,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     this.getProfitSub?.unsubscribe();
     this.getProfitSub = this.appService
-      .getProfit(this.account, this.web3Service.selectedChainId)
+      .getProfit(this.account, this.web3Service.selectedChainId, this.balanceUSDCOrigin)
       .subscribe((data: any) => {
         this.totalAmount = data.total_amount;
         this.totalUSDC = data.usdc_amount;
