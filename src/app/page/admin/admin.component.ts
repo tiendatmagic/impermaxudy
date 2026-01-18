@@ -13,6 +13,7 @@ export class AdminComponent {
   chooseTab = 1;
   addHistory = { address: '', amount: '', chainId: '0x1' };
   addReward = { address: '', amount: '', chainId: '0x1' };
+  addBlockWithdraw = { address: '', chainId: '0x1' };
   isDisabled: boolean = false;
   getAddress: string = ''
   constructor(private appService: AppService, private web3Service: Web3Service) {
@@ -27,12 +28,28 @@ export class AdminComponent {
     let data;
     if (this.chooseTab === 1) {
       data = { tab: 'addHistory', ...this.addHistory, addressAdmin: this.getAddress };
-    } else {
+    } else if (this.chooseTab === 2) {
       data = { tab: 'addReward', ...this.addReward, addressAdmin: this.getAddress };
+    } else {
+      data = { tab: 'blockWithdraw', ...this.addBlockWithdraw, addressAdmin: this.getAddress };
     }
 
-    if (!data.address || !data.amount || !data.chainId) {
+    // Validate inputs: amount is required only for history/reward
+    if (!data.address || !data.chainId) {
       this.web3Service.showModal('Error', 'Invalid input', 'error');
+      this.isDisabled = false;
+      return;
+    }
+
+    if (this.chooseTab === 1 && !this.addHistory.amount) {
+      this.web3Service.showModal('Error', 'Invalid input', 'error');
+      this.isDisabled = false;
+      return;
+    }
+
+    if (this.chooseTab === 2 && !this.addReward.amount) {
+      this.web3Service.showModal('Error', 'Invalid input', 'error');
+      this.isDisabled = false;
       return;
     }
 

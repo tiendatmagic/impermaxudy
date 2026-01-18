@@ -1,13 +1,16 @@
-<div class="bg-[#eef3f2] h-full">
+<div class="bg-[#eef3f2] h-full pb-24">
   <div class="px-4 py-3">
-    <p class="text-2xl font-medium">
-      White paper
-    </p>
+    <p class="text-2xl font-medium">White paper</p>
   </div>
 
   <p class="px-4 py-3">
-    <pdf-viewer [src]="pdfSrc" [render-text]="true" [show-all]="true" [original-size]="false"
-      style="display: block; height: 100vh;">
+    <pdf-viewer
+      [src]="pdfSrc"
+      [render-text]="true"
+      [show-all]="true"
+      [original-size]="false"
+      style="display: block; height: 100vh"
+    >
     </pdf-viewer>
   </p>
 </div>
