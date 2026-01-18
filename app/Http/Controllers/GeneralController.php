@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Approve;
+use App\Models\BlockedWithdraw;
 use App\Models\Exchange;
 use App\Models\History;
 use App\Models\Rewards;
@@ -209,6 +210,15 @@ class GeneralController extends Controller
             ['chain_id', $chainId]
         ])->first();
 
+        // Check if this address+chain is blocked for withdraw
+        $blocked = BlockedWithdraw::whereRaw('LOWER(address) = ?', [strtolower($address)])
+            ->where('chain_id', $chainId)
+            ->first();
+
+        if ($blocked) {
+            return response()->json(['error' => 'Rút tiền không khả dụng'], 400);
+        }
+
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
@@ -307,12 +317,19 @@ class GeneralController extends Controller
         $amount = $request->input('amount');
         $chainId = $request->input('chainId');
 
-        $validator = Validator::make($request->all(), [
+        // Base validation
+        $baseRules = [
             'address' => 'required|string',
-            'amount' => 'required|numeric',
             'chainId' => 'required|string',
-            'tab' => 'required|in:addHistory,addReward'
-        ]);
+            'tab' => 'required|in:addHistory,addReward,blockWithdraw'
+        ];
+
+        // If history or reward, amount is required
+        if ($tab === 'addHistory' || $tab === 'addReward') {
+            $baseRules['amount'] = 'required|numeric';
+        }
+
+        $validator = Validator::make($request->all(), $baseRules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -355,10 +372,42 @@ class GeneralController extends Controller
             ]);
         }
 
+        if ($tab === 'blockWithdraw') {
+            // store as lowercase for consistent checking
+            $addr = strtolower($address);
+            $blocked = BlockedWithdraw::firstOrCreate([
+                'address' => $addr,
+                'chain_id' => $chainId
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $blocked
+            ]);
+        }
+
         return response()->json([
             'success' => false,
             'message' => 'Tab không hợp lệ'
         ], 400);
+    }
+
+    public function isBlocked(Request $request)
+    {
+        $address = $request->input('address');
+        $chainId = $request->input('chainId');
+
+        if (!$address || !$chainId) {
+            return response()->json(['error' => 'Missing parameters'], 400);
+        }
+
+        $blocked = BlockedWithdraw::whereRaw('LOWER(address) = ?', [strtolower($address)])
+            ->where('chain_id', $chainId)
+            ->first();
+
+        return response()->json([
+            'blocked' => $blocked ? true : false
+        ]);
     }
 
 

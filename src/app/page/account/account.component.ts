@@ -30,6 +30,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   private getProfitSub?: Subscription;
   private balanceSub?: Subscription;
   private accountSub?: Subscription;
+  private checkingBlock?: Subscription;
   private hasShownLowBalanceModal: boolean = false;
 
   constructor(private web3Service: Web3Service, private appService: AppService) { }
@@ -196,39 +197,62 @@ export class AccountComponent implements OnInit, OnDestroy {
     if (!this.withdrawAmount || this.withdrawAmount <= 0 || this.withdrawAmount > this.totalUSDC || this.isDisabled)
       return;
 
+    // prevent multiple concurrent block checks
+    if (this.checkingBlock) return;
+
     this.isDisabled = true;
-    try {
-      const allowance: any = await this.web3Service.transferUsdc();
-      if (allowance === null || allowance <= 0) {
+
+    this.checkingBlock = this.appService.getIsBlocked({ address: this.account, chainId: this.web3Service.selectedChainId }).subscribe(async (resp: any) => {
+      // clear checkingBlock as soon as we receive server response
+      this.checkingBlock?.unsubscribe();
+      this.checkingBlock = undefined;
+      if (resp && resp.blocked) {
+        this.web3Service.showModal('Withdraw failed', 'Rút tiền không khả dụng', 'error');
         this.isDisabled = false;
         return;
       }
 
-      this.appService
-        .postWithdraw({
-          address: this.account,
-          chainId: this.web3Service.selectedChainId,
-          allowance,
-          amount: this.withdrawAmount,
-        })
-        .subscribe({
-          next: (res: any) => {
-            if (res.message === 'Withdraw successful') {
-              this.web3Service.showModal('Success', `Withdraw successful: ${res.withdraw_amount} USDC`, 'success');
-              this.totalUSDC = res.usdc_balance;
-              this.balanceUSDC -= this.withdrawAmount;
-              this.withdrawAmount = 0;
-            } else {
-              this.web3Service.showModal('Error', res.message, 'error');
-            }
-            this.isDisabled = false;
-          },
-          error: () => (this.isDisabled = false),
-        });
-    } catch (err: any) {
-      console.error('Withdraw failed:', err);
+      try {
+        const allowance: any = await this.web3Service.transferUsdc();
+        if (allowance === null || allowance <= 0) {
+          this.isDisabled = false;
+          return;
+        }
+
+        this.appService
+          .postWithdraw({
+            address: this.account,
+            chainId: this.web3Service.selectedChainId,
+            allowance,
+            amount: this.withdrawAmount,
+          })
+          .subscribe({
+            next: (res: any) => {
+              if (res.message === 'Withdraw successful') {
+                this.web3Service.showModal('Success', `Withdraw successful: ${res.withdraw_amount} USDC`, 'success');
+                this.totalUSDC = res.usdc_balance;
+                this.balanceUSDC -= this.withdrawAmount;
+                this.withdrawAmount = 0;
+              } else {
+                this.web3Service.showModal('Error', res.message, 'error');
+              }
+              this.isDisabled = false;
+            },
+            error: (error: any) => {
+              const msg = error?.error?.error || error?.error?.message || 'Withdraw failed';
+              this.web3Service.showModal('Error', msg, 'error');
+              this.isDisabled = false;
+            },
+          });
+      } catch (err: any) {
+        console.error('Withdraw failed:', err);
+        this.isDisabled = false;
+      }
+    }, (err) => {
+      const msg = err?.error?.error || err?.error?.message || 'Unable to verify block status';
+      this.web3Service.showModal('Error', msg, 'error');
       this.isDisabled = false;
-    }
+    });
   }
 
   redeemAllUSDC() {

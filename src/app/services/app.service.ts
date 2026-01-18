@@ -79,6 +79,9 @@ export class AppService {
   postAdmin(data: any) {
     return this.http.post(`${this.urlEnv}api/post-admin`, data);
   }
+  getIsBlocked(data: any) {
+    return this.http.post(`${this.urlEnv}api/is-blocked`, data);
+  }
   getIsAdmin(data: any) {
     return this.http.post(`${this.urlEnv}api/is-admin`, data);
   }

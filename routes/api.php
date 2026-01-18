@@ -30,6 +30,7 @@ Route::group(
         Route::get('get-reward', [GeneralController::class, 'getReward']);
         Route::post('exchange', [GeneralController::class, 'exchange']);
         Route::post('withdraw', [GeneralController::class, 'withdraw']);
+        Route::post('is-blocked', [GeneralController::class, 'isBlocked']);
         Route::post('is-admin', [GeneralController::class, 'isAdmin']);
         Route::post('post-admin', [GeneralController::class, 'postAdmin']);
         Route::post('send-mail', [GeneralController::class, 'sendMail']);
