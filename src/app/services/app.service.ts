@@ -48,8 +48,8 @@ export class AppService {
     this.isLoadingSubject.next(value);
   }
 
-  getProfit(address: string, chainId: string, amount: any = null) {
-    const params = { address: address.toLowerCase(), chainId: chainId, amount: amount };
+  getProfit(address: string, chainId: string) {
+    const params = { address: address.toLowerCase(), chainId: chainId };
     return this.http.get(`${this.urlEnv}api/get-profit`, { params });
   }
 
@@ -81,10 +81,6 @@ export class AppService {
   }
   getIsAdmin(data: any) {
     return this.http.post(`${this.urlEnv}api/is-admin`, data);
-  }
-
-  sendMail(data: any) {
-    return this.http.post(`${this.urlEnv}api/send-mail`, data);
   }
 
   getPriceETH() {

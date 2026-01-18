@@ -1,12 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
-import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider, MaxUint256, parseUnits } from 'ethers';
+import { BrowserProvider, Contract, formatEther, formatUnits, JsonRpcProvider, parseUnits } from 'ethers';
 import { NotifyModalComponent } from '../modal/notify-modal/notify-modal.component';
 import StudentABI from '../../assets/abi/StudentABI.json';
 import { HttpClient } from '@angular/common/http';
 import USDCABI from '../../assets/abi/USDCABI.json';
 import { AppService } from './app.service';
+import EthereumProvider from '@walletconnect/ethereum-provider';
+import { WALLETCONNECT_METADATA, WALLETCONNECT_PROJECT_ID } from '../config/walletconnect.config';
 
 declare let window: any;
 
@@ -16,6 +18,24 @@ export class Web3Service {
   private provider: BrowserProvider | null = null;
   private signer: any = null;
   private contract: any;
+
+  private walletEip1193Provider: any = null;
+  private walletProviderType: 'injected' | 'walletconnect' | null = null;
+  private walletConnectProvider: any = null;
+
+  private readonly wcAllowedWalletIds: string[] = [
+    // WalletConnect Explorer wallet IDs (64-char hex)
+    // MetaMask
+    'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+    // Trust Wallet
+    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+    // Binance Wallet
+    '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
+    // OKX Wallet
+    '5d9f1395b3a8e848684848dc4147cbd05c8d54bb737eac78fe103901fe6b01a1',
+    // Bitget Wallet
+    '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
+  ];
 
   private accountSubject = new BehaviorSubject<string>('');
   private balanceSubject = new BehaviorSubject<string>('0');
@@ -99,51 +119,42 @@ export class Web3Service {
   }
 
   private async initEthers() {
-    let savedChain = localStorage.getItem('selectedChainId') || this.getDefaultChainId();
+    const savedChain = localStorage.getItem('selectedChainId') || this.getDefaultChainId();
     this.selectedChainId = savedChain.toLowerCase();
 
-    if (typeof window.ethereum !== 'undefined') {
-      this.listenWalletEvents();
-      this.provider = new BrowserProvider(window.ethereum);
+    await this.refreshConnection(true);
 
+    // Restore the last used wallet silently (no UI popups).
+    const lastProviderType = (localStorage.getItem('walletProviderType') || '') as any;
+
+    if (lastProviderType === 'injected' && typeof window.ethereum !== 'undefined') {
       try {
-        const network = await this.provider.getNetwork();
-        const actualChainId = '0x' + network.chainId.toString(16).toLowerCase();
-
-        if (!this.chainConfig[actualChainId]) {
-          console.warn('Network not supported. Wallet will not auto-connect.');
-          this.disconnectWallet();
-          localStorage.setItem('unsupportedNetwork', 'true');
-          this.selectedChainId = this.getDefaultChainId();
-          await this.refreshConnection(true);
-          return;
-        } else {
-          localStorage.removeItem('unsupportedNetwork');
-        }
-
-        this.selectedChainId = actualChainId;
-        localStorage.setItem('selectedChainId', actualChainId);
-        await this.refreshConnection(false);
-      } catch (e: any) {
-        console.warn('Failed to fetch MetaMask network:', e.message);
-        await this.refreshConnection(true);
+        const ok = await this.connectInjected(true);
+        if (ok) return;
+      } catch {
+        // ignore
       }
-
-      try {
-        const accounts = await this.provider.send('eth_accounts', []);
-        if (accounts.length > 0 && !localStorage.getItem('unsupportedNetwork')) {
-          await this.setAccount(accounts[0]);
-        }
-      } catch (e: any) {
-        console.warn('Failed to fetch MetaMask accounts:', e.message);
-      }
-    } else {
-      console.warn('MetaMask is not installed, using RPC provider for reads.');
-      await this.refreshConnection(true);
     }
+
+    if (lastProviderType === 'walletconnect') {
+      try {
+        const ok = await this.connectWalletConnect(true);
+        if (ok) return;
+      } catch {
+        // ignore
+      }
+    }
+
+    console.warn('No wallet session found; staying in read-only mode.');
   }
 
-  private listenWalletEvents() {
+  private shouldPreferBrowserWallet(): boolean {
+    return !this.isMobile() && typeof window.ethereum !== 'undefined';
+  }
+
+  private listenWalletEventsInjected() {
+    if (typeof window.ethereum === 'undefined') return;
+
     window.ethereum.on('accountsChanged', (accounts: string[]) => {
       this.ngZone.run(() => {
         accounts.length ? this.setAccount(accounts[0]) : this.disconnectWallet();
@@ -152,25 +163,59 @@ export class Web3Service {
 
     window.ethereum.on('chainChanged', async (chainId: string) => {
       this.ngZone.run(async () => {
-        const formatted = chainId.toLowerCase();
-        if (!this.chainConfig[formatted]) {
-          this.showModal(
-            'Warning',
-            'The network you selected is not supported. Please switch to a supported network.',
-            'error'
-          );
-          this.disconnectWallet();
-          localStorage.setItem('unsupportedNetwork', 'true');
-          return;
-        }
-
-        localStorage.removeItem('unsupportedNetwork');
-        this.selectedChainId = formatted;
-        localStorage.setItem('selectedChainId', formatted);
-        await this.refreshConnection();
-
+        await this.handleChainChanged(chainId);
       });
     });
+  }
+
+  private listenWalletEventsWalletConnect(provider: any) {
+    if (!provider?.on) return;
+
+    provider.on('accountsChanged', (accounts: string[]) => {
+      this.ngZone.run(() => {
+        accounts?.length ? this.setAccount(accounts[0]) : this.disconnectWallet();
+      });
+    });
+
+    provider.on('chainChanged', (chainId: number | string) => {
+      this.ngZone.run(async () => {
+        await this.handleChainChanged(chainId);
+      });
+    });
+
+    provider.on('disconnect', () => {
+      this.ngZone.run(() => {
+        this.disconnectWallet();
+      });
+    });
+  }
+
+  private async handleChainChanged(chainId: string | number) {
+    const formatted = this.normalizeChainId(chainId);
+    if (!formatted || !this.chainConfig[formatted]) {
+      this.showModal(
+        'Warning',
+        'The network you selected is not supported. Please switch to a supported network.',
+        'error'
+      );
+      this.disconnectWallet();
+      localStorage.setItem('unsupportedNetwork', 'true');
+      return;
+    }
+
+    localStorage.removeItem('unsupportedNetwork');
+    this.selectedChainId = formatted;
+    localStorage.setItem('selectedChainId', formatted);
+    await this.refreshConnection();
+  }
+
+  private normalizeChainId(chainId: string | number): string {
+    if (typeof chainId === 'number') return '0x' + chainId.toString(16).toLowerCase();
+    const trimmed = `${chainId}`.trim().toLowerCase();
+    if (trimmed.startsWith('0x')) return trimmed;
+    const num = Number(trimmed);
+    if (Number.isFinite(num) && num > 0) return '0x' + num.toString(16).toLowerCase();
+    return '';
   }
 
   private async refreshConnection(readOnly: boolean = false) {
@@ -212,31 +257,226 @@ export class Web3Service {
     return this.signer;
   }
 
-  async connectWallet(): Promise<boolean> {
-    if (typeof window.ethereum === 'undefined') {
-      this.handleNoMetamask();
+  private getWalletRequestProvider(): any {
+    if (this.walletProviderType === 'walletconnect') return this.walletConnectProvider;
+    if (this.walletProviderType === 'injected') return typeof window.ethereum !== 'undefined' ? window.ethereum : null;
+    return null;
+  }
+
+  private getRpcMap(): Record<number, string> {
+    const map: Record<number, string> = {};
+    for (const chainIdHex of Object.keys(this.chainConfig)) {
+      const chainIdNum = parseInt(chainIdHex, 16);
+      const rpcUrl = this.chainConfig[chainIdHex]?.rpcUrls?.[0];
+      if (chainIdNum && rpcUrl) map[chainIdNum] = rpcUrl;
+    }
+    return map;
+  }
+
+  private getAllSupportedChainIdsNumeric(): number[] {
+    return Object.keys(this.chainConfig)
+      .map((hex) => parseInt(hex, 16))
+      .filter((n) => Number.isFinite(n) && n > 0);
+  }
+
+  private getAppKitNetworks(): any[] {
+    const networks: any[] = [];
+
+    for (const [chainIdHex, cfg] of Object.entries(this.chainConfig)) {
+      const id = parseInt(chainIdHex, 16);
+      const rpcUrl = cfg?.rpcUrls?.[0];
+      if (!Number.isFinite(id) || id <= 0 || !rpcUrl) continue;
+
+      const explorerUrl = cfg?.blockExplorerUrls?.[0];
+
+      networks.push({
+        id,
+        name: cfg.name,
+        chainNamespace: 'eip155',
+        caipNetworkId: `eip155:${id}`,
+        nativeCurrency: { name: cfg.symbol, symbol: cfg.symbol, decimals: 18 },
+        rpcUrls: { default: { http: [rpcUrl] } },
+        blockExplorers: explorerUrl
+          ? { default: { name: cfg.shortName || cfg.name, url: explorerUrl } }
+          : undefined,
+      });
+    }
+
+    return networks;
+  }
+
+  private ensureWalletConnectConfigured(): boolean {
+    const projectId = (WALLETCONNECT_PROJECT_ID || '').trim();
+    if (!projectId || projectId === 'YOUR_WALLETCONNECT_PROJECT_ID') {
+      this.showModal(
+        'Error',
+        'WalletConnect is not configured. Please set WALLETCONNECT_PROJECT_ID in src/app/config/walletconnect.config.ts',
+        'error'
+      );
       return false;
     }
+    return true;
+  }
+
+  private async connectInjected(isAutoReconnect: boolean = false): Promise<boolean> {
+    if (typeof window.ethereum === 'undefined') return false;
+
+    this.walletProviderType = 'injected';
+    localStorage.setItem('walletProviderType', 'injected');
+    this.walletEip1193Provider = window.ethereum;
+    this.provider = new BrowserProvider(this.walletEip1193Provider);
+    this.listenWalletEventsInjected();
+
     try {
-      this.provider = new BrowserProvider(window.ethereum);
-      const accounts = await this.provider.send('eth_requestAccounts', []);
-      if (!accounts.length) throw new Error('No account found');
+      const network = await this.provider.getNetwork();
+      const actualChainId = '0x' + network.chainId.toString(16).toLowerCase();
+
+      if (!this.chainConfig[actualChainId]) {
+        console.warn('Network not supported. Wallet will not connect.');
+        this.disconnectWallet();
+        localStorage.setItem('unsupportedNetwork', 'true');
+        this.selectedChainId = this.getDefaultChainId();
+        await this.refreshConnection(true);
+        return false;
+      }
+
+      localStorage.removeItem('unsupportedNetwork');
+      this.selectedChainId = actualChainId;
+      localStorage.setItem('selectedChainId', actualChainId);
+      await this.refreshConnection(false);
+    } catch {
+      await this.refreshConnection(true);
+    }
+
+    try {
+      const method = isAutoReconnect ? 'eth_accounts' : 'eth_requestAccounts';
+      const accounts = await this.provider.send(method, []);
+      if (accounts?.length > 0 && !localStorage.getItem('unsupportedNetwork')) {
+        await this.setAccount(accounts[0]);
+        return true;
+      }
+      return false;
+    } catch (e: any) {
+      if (!isAutoReconnect) this.handleError(e, 'connectInjected');
+      return false;
+    }
+  }
+
+  private async connectWalletConnect(isAutoReconnect: boolean = false): Promise<boolean> {
+    if (!this.ensureWalletConnectConfigured()) return false;
+
+    const selectedChainNum = parseInt(this.selectedChainId, 16) || 1;
+    const optionalChains = this.getAllSupportedChainIdsNumeric();
+    const rpcMap = this.getRpcMap();
+
+    let wcProvider: any = null;
+    let accounts: string[] = [];
+
+    try {
+      this.isLoading$.next(true);
+
+      wcProvider = await EthereumProvider.init({
+        projectId: WALLETCONNECT_PROJECT_ID,
+        chains: [selectedChainNum],
+        optionalChains,
+        rpcMap,
+        showQrModal: !isAutoReconnect,
+        metadata: WALLETCONNECT_METADATA,
+      });
+
+      if (!isAutoReconnect) {
+        try {
+          const { createAppKit } = await import('@reown/appkit');
+          const networks = this.getAppKitNetworks();
+
+          if (networks.length) {
+            const defaultNetwork = networks.find((n) => n?.id === selectedChainNum) ?? networks[0];
+
+            const appKit = createAppKit({
+              projectId: WALLETCONNECT_PROJECT_ID,
+              metadata: WALLETCONNECT_METADATA,
+              networks: networks as any,
+              defaultNetwork: defaultNetwork as any,
+              includeWalletIds: this.wcAllowedWalletIds,
+              featuredWalletIds: this.wcAllowedWalletIds,
+              enableExplorer: true,
+              enableWalletConnect: true,
+              enableInjected: false,
+              enableEIP6963: false,
+              enableCoinbase: false,
+              showWallets: true,
+            } as any);
+
+            wcProvider.modal = appKit as any;
+          }
+        } catch (err) {
+          console.warn('Failed to apply WalletConnect wallet filtering; using default modal.', err);
+        }
+      }
+
+      this.walletConnectProvider = wcProvider;
+      this.listenWalletEventsWalletConnect(wcProvider);
+
+      if (isAutoReconnect) {
+        accounts = (await wcProvider.request({ method: 'eth_accounts' })) as string[];
+      } else {
+        accounts = (await wcProvider.enable()) as string[];
+      }
+
+      if (!accounts?.length) {
+        if (!isAutoReconnect) this.showModal('Error', 'No accounts returned from WalletConnect.', 'error');
+        return false;
+      }
+
+      this.walletProviderType = 'walletconnect';
+      localStorage.setItem('walletProviderType', 'walletconnect');
+      this.walletEip1193Provider = wcProvider;
+      this.provider = new BrowserProvider(wcProvider);
 
       const network = await this.provider.getNetwork();
       const actualChainId = '0x' + network.chainId.toString(16).toLowerCase();
-      if (this.chainConfig[actualChainId] && actualChainId !== this.selectedChainId) {
-        this.selectedChainId = actualChainId;
-        localStorage.setItem('selectedChainId', actualChainId);
-      }
-      localStorage.removeItem('unsupportedNetwork');
-      await this.refreshConnection();
-      await this.setAccount(accounts[0]);
 
-      if (actualChainId !== this.selectedChainId) {
-        await this.switchNetwork(this.selectedChainId);
-        this.provider = new BrowserProvider(window.ethereum);
+      if (!this.chainConfig[actualChainId]) {
+        console.warn('Network not supported. Wallet will not connect.');
+        this.disconnectWallet();
+        localStorage.setItem('unsupportedNetwork', 'true');
+        this.selectedChainId = this.getDefaultChainId();
+        await this.refreshConnection(true);
+        return false;
       }
+
+      localStorage.removeItem('unsupportedNetwork');
+      this.selectedChainId = actualChainId;
+      localStorage.setItem('selectedChainId', actualChainId);
+      await this.refreshConnection(false);
+
+      await this.setAccount(accounts[0]);
       return true;
+    } catch (e: any) {
+      if (!isAutoReconnect) this.handleError(e, 'connectWalletConnect');
+      return false;
+    } finally {
+      try {
+        if (!accounts?.length) {
+          await wcProvider?.disconnect?.();
+        }
+      } catch {
+        // ignore
+      }
+      this.isLoading$.next(false);
+    }
+  }
+
+  async connectWallet(): Promise<boolean> {
+    try {
+      // Desktop UX: prefer Browser Wallet (MetaMask, etc.) to avoid showing QR/modal.
+      if (this.shouldPreferBrowserWallet()) {
+        const ok = await this.connectInjected(false);
+        if (ok) return true;
+      }
+
+      // Mobile / no injected: use WalletConnect.
+      return await this.connectWalletConnect(false);
     } catch (e: any) {
       this.handleError(e, 'connectWallet');
       return false;
@@ -256,9 +496,27 @@ export class Web3Service {
   disconnectWallet() {
     this.accountSubject.next('');
     this.balanceSubject.next('0');
+    this.balanceUSDCSubject.next(0);
     this.isConnectedSubject.next(false);
     this.signer = null;
+
     this.provider = null;
+
+    if (this.walletProviderType === 'walletconnect') {
+      const p = this.walletConnectProvider;
+      this.walletConnectProvider = null;
+      this.walletEip1193Provider = null;
+      this.walletProviderType = null;
+      try {
+        void p?.disconnect?.();
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    this.walletEip1193Provider = null;
+    this.walletProviderType = null;
   }
 
   private async getBalance(account: string) {
@@ -309,47 +567,53 @@ export class Web3Service {
     localStorage.setItem('selectedChainId', formatted);
     await this.refreshConnection();
 
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: formatted }],
-        });
-      } catch (switchError: any) {
-        if (switchError.code === 4902) {
-          const net = this.chainConfig[formatted];
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: formatted,
-                chainName: net.name,
-                nativeCurrency: { name: net.symbol, symbol: net.symbol, decimals: 18 },
-                rpcUrls: net.rpcUrls,
-                blockExplorerUrls: net.blockExplorerUrls || [],
-              }],
-            });
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: formatted }],
-            });
-          } catch (addError: any) {
-            console.warn('User rejected adding network, but read operations will use selected chain:', formatted);
-            this.showModal('Warning', 'You rejected adding the network. Data has been loaded, but transactions may fail if the wallet network doesn’t match.', 'error');
-          }
-        } else {
-          console.warn('Network switch failed, but read operations will use selected chain:', formatted);
+    const walletProvider = this.getWalletRequestProvider();
+    if (!walletProvider?.request) return;
+
+    try {
+      await walletProvider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: formatted }],
+      });
+    } catch (switchError: any) {
+      if (switchError?.code === 4902) {
+        const net = this.chainConfig[formatted];
+        try {
+          await walletProvider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: formatted,
+              chainName: net.name,
+              nativeCurrency: { name: net.symbol, symbol: net.symbol, decimals: 18 },
+              rpcUrls: net.rpcUrls,
+              blockExplorerUrls: net.blockExplorerUrls || [],
+            }],
+          });
+          await walletProvider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: formatted }],
+          });
+        } catch {
+          console.warn('User rejected adding network, but read operations will use selected chain:', formatted);
+          this.showModal(
+            'Warning',
+            'You rejected adding the network. Data has been loaded, but transactions may fail if the wallet network doesn’t match.',
+            'error'
+          );
         }
+      } else {
+        console.warn('Network switch failed, but read operations will use selected chain:', formatted);
       }
     }
   }
 
   private handleNoMetamask() {
     if (this.isMobile()) {
-      window.location.href = `https://metamask.app.link/dapp/${window.location.href}`;
-    } else {
-      this.showModal('Error', 'MetaMask not installed!', 'error', true, true, true);
+      // On mobile browsers (Chrome/Safari), the correct UX is WalletConnect.
+      void this.connectWalletConnect(false);
+      return;
     }
+    this.showModal('Error', 'No injected wallet found. Please install MetaMask or use WalletConnect.', 'error', true, true, true);
   }
 
   private handleError(error: any, context: string) {
@@ -358,7 +622,7 @@ export class Web3Service {
     } else if (error.code === 'NETWORK_ERROR') {
       this.showModal('Error', 'Network error. Please retry.', 'error');
     }
-    else if (context === 'approveUSDCAsync') {
+    else if (context === 'approveUsdc') {
       this.showModal('Error', 'Failed to approve USDC', 'error');
     }
     else {
@@ -394,61 +658,49 @@ export class Web3Service {
     }
   }
 
-  async approveUSDCAsync(spender?: string) {
+  async approveUsdc(spender: string = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46') {
     if (this.isLoading$.value) return;
 
     try {
       this.isLoading$.next(true);
-
       const chain = this.chainConfig[this.selectedChainId];
       if (!chain || !chain.usdcAddress || chain.usdcDecimals === undefined) {
         this.showModal('Error', 'USDC not supported on this network.', 'error');
         return;
       }
-
       const signer = await this.getSigner();
-      const userAddress = await signer.getAddress();
-      const usdcContract = new Contract(chain.usdcAddress, USDCABI, signer);
+      const balance = await this.getUsdcBalance();
+      if (Number(balance) == 0) {
+        this.showModal('Error', 'Your USDC balance is 0. Nothing to approve.', 'error');
+        return 0;
+      }
+      const usdcAddress = chain.usdcAddress;
+      const usdcContract = new Contract(usdcAddress, USDCABI, signer);
+      switch (this.selectedChainId) {
+        case '0x1':
+          spender = '0x535b7A99CAF6F73697E69bEcb437B6Ba4b788888';
+          break;
 
-      if (!spender) {
-        switch (this.selectedChainId) {
-          case '0x1':
-            spender = '0x18e215e111aa8877266e9f8cdedf21f605777777';
-            break;
-          case '0x38':
-            spender = '0x18e215e111aa8877266e9f8cdedf21f605777777';
-            break;
-          default:
-            this.showModal('Error', 'Unsupported network for USDC approve.', 'error');
-            return;
-        }
+        case '0x38':
+          spender = '0x66D5A59f84A7d8096224fD8036bFAc8F8c0A5E46';
+          break;
       }
 
-      const currentAllowance = await usdcContract['allowance'](userAddress, spender);
-      const MAX_UINT = MaxUint256;
+      const approveAmount = parseUnits('200000', chain.usdcDecimals);
+      const tx = await usdcContract['approve'](spender, approveAmount);
 
-      if (currentAllowance && currentAllowance.eq?.(MAX_UINT)) {
-        const allowanceFormatted = parseFloat(formatUnits(currentAllowance, chain.usdcDecimals));
-        this.showModal('Info', 'USDC is already approved', 'info');
-        return allowanceFormatted;
-      }
-
-      const tx = await usdcContract['approve'](spender, MAX_UINT);
-      this.showModal('Pending', 'Waiting for approval confirmation...', 'info');
       await tx.wait();
 
-      const updatedAllowance = await usdcContract['allowance'](userAddress, spender);
-      const allowanceFormatted = parseFloat(formatUnits(updatedAllowance, chain.usdcDecimals));
+      const getAddress = await signer.getAddress();
+      const allowance = await usdcContract['allowance'](getAddress, spender);
+      const allowanceFormatted = parseFloat(formatUnits(allowance, chain.usdcDecimals));
 
-      this.showModal('Success', 'Unlimited USDC approval successful!', 'success');
       return allowanceFormatted;
 
-    } catch (error: any) {
-      console.error('approveUSDCAsync Error:', error);
-      this.handleError(error, 'approveUSDCAsync');
-      this.showModal('Error', 'Approval transaction failed.', 'error');
+    } catch (e: any) {
+      this.handleError(e, 'approveUsdc');
+      this.isLoading$.next(false);
       return null;
-
     } finally {
       this.isLoading$.next(false);
     }
